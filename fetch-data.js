@@ -1,0 +1,325 @@
+#!/usr/bin/env node
+/**
+ * Ligue des champions 2026-27 — Bracket LIVE : récupérateur de données
+ * --------------------------------------------------------------------
+ * Source : API SportMonks (même token que le bracket Coupe du monde 2026).
+ *
+ *   ligue 2 · saison 28155 (2026/2027) · stage 77484090 (« League Stage »)
+ *   8 journées × 18 matchs = 144 rencontres, 36 clubs.
+ *
+ * Écrit un data-<lang>.json par langue (fr → data.json). Le widget les lit côté
+ * client : le token n'est JAMAIS exposé.
+ *
+ * Ce script ne classe PAS les équipes — il livre les matchs bruts et les points
+ * disciplinaires. Le classement est calculé dans le widget, ce qui permet la
+ * bascule « inclure les matchs en cours » sans deuxième jeu de données.
+ *
+ * Il détecte aussi automatiquement les stages de la phase finale (barrages,
+ * 8es, quarts, demies, finale) dès que l'UEFA les tire et que SportMonks les
+ * publie : tant qu'ils n'existent pas, le widget projette l'arbre à partir du
+ * classement live.
+ *
+ *   node fetch-data.js
+ */
+
+const fs = require("fs");
+const path = require("path");
+const { TEAMS, LOGO } = require("./teams.js");
+
+function loadDotEnv() {
+  const envPath = path.join(__dirname, ".env");
+  if (!fs.existsSync(envPath)) return;
+  for (const line of fs.readFileSync(envPath, "utf8").split("\n")) {
+    const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*)\s*$/);
+    if (m && !process.env[m[1]]) process.env[m[1]] = m[2].replace(/^["']|["']$/g, "");
+  }
+}
+loadDotEnv();
+
+const API_TOKEN = process.env.SPORTMONKS_API_TOKEN;
+if (!API_TOKEN) {
+  console.error("✗ SPORTMONKS_API_TOKEN manquant (voir .env.example).");
+  process.exit(1);
+}
+
+const BASE = "https://api.sportmonks.com/v3/football";
+const LEAGUE_ID = 2;
+const SEASON_ID = 28155;        // Ligue des champions 2026/2027
+const LEAGUE_STAGE_ID = 77484090; // phase de ligue (8 journées)
+const KO_FROM = "2027-02-01";   // les stages de phase finale commencent après cette date
+const LANGS = ["fr", "en", "es", "pt", "it"];
+
+// Calendrier officiel UEFA de la phase finale 2026-27 (uefa.com).
+// Sert de repère tant que les tirages ne sont pas faits ; dès que SportMonks
+// publie les rencontres, les vraies dates prennent le dessus.
+const KO_CALENDAR = {
+  po:  { fr:"16-17 & 23-24 février 2027", en:"16–17 & 23–24 February 2027", es:"16-17 y 23-24 de febrero de 2027", pt:"16-17 e 23-24 de fevereiro de 2027", it:"16-17 e 23-24 febbraio 2027" },
+  r16: { fr:"9-10 & 16-17 mars 2027",     en:"9–10 & 16–17 March 2027",     es:"9-10 y 16-17 de marzo de 2027",    pt:"9-10 e 16-17 de março de 2027",      it:"9-10 e 16-17 marzo 2027" },
+  qf:  { fr:"6-7 & 13-14 avril 2027",     en:"6–7 & 13–14 April 2027",      es:"6-7 y 13-14 de abril de 2027",     pt:"6-7 e 13-14 de abril de 2027",       it:"6-7 e 13-14 aprile 2027" },
+  sf:  { fr:"27-28 avril & 4-5 mai 2027", en:"27–28 April & 4–5 May 2027",  es:"27-28 de abril y 4-5 de mayo de 2027", pt:"27-28 de abril e 4-5 de maio de 2027", it:"27-28 aprile e 4-5 maggio 2027" },
+  f:   { fr:"5 juin 2027 — Metropolitano, Madrid", en:"5 June 2027 — Metropolitano, Madrid", es:"5 de junio de 2027 — Metropolitano, Madrid", pt:"5 de junho de 2027 — Metropolitano, Madrid", it:"5 giugno 2027 — Metropolitano, Madrid" }
+};
+
+/* ------------------------------------------------------------------ HTTP */
+
+async function getJSON(url) {
+  for (let tentative = 1; ; tentative++) {
+    const res = await fetch(url);
+    if (res.ok) return res.json();
+    // 429 = quota par minute ; SportMonks le remet à zéro toutes les 60 s.
+    if ((res.status === 429 || res.status >= 500) && tentative < 4) {
+      const attente = res.status === 429 ? 61000 : 2000 * tentative;
+      console.warn(`  ⚠ ${res.status} — nouvelle tentative dans ${Math.round(attente / 1000)} s`);
+      await new Promise((r) => setTimeout(r, attente));
+      continue;
+    }
+    throw new Error(`SportMonks ${res.status} ${res.statusText} — ${url.replace(API_TOKEN, "***")}`);
+  }
+}
+
+/** Suit la pagination SportMonks jusqu'au bout. */
+async function getAll(url) {
+  const out = [];
+  let next = url;
+  while (next) {
+    const json = await getJSON(next);
+    out.push(...(json.data || []));
+    const pg = json.pagination || {};
+    next = pg.has_more && pg.next_page ? `${pg.next_page}&api_token=${API_TOKEN}` : null;
+  }
+  return out;
+}
+
+/* ------------------------------------------------------- Normalisation */
+
+// Un match est joué (compte au classement) dans ces états.
+const ETATS_JOUES = new Set(["FT", "AET", "FT_PEN", "AWARDED", "WO"]);
+// Un match est en cours dans ceux-là.
+const ETATS_LIVE = new Set([
+  "INPLAY_1ST_HALF", "INPLAY_2ND_HALF", "HT", "BREAK",
+  "INPLAY_ET", "INPLAY_ET_2ND_HALF", "PEN_BREAK", "INPLAY_PENALTIES", "EXTRA_TIME_BREAK"
+]);
+// Et reporté / annulé dans ceux-là : ni joué, ni à venir.
+const ETATS_HS = new Set(["POSTPONED", "CANCELLED", "SUSPENDED", "ABANDONED", "INTERRUPTED", "DELETED"]);
+
+function statutDe(fx) {
+  const dev = (fx.state && fx.state.developer_name) || "NS";
+  if (ETATS_JOUES.has(dev)) return "FT";
+  if (ETATS_LIVE.has(dev)) return dev === "HT" ? "HT" : "LIVE";
+  if (ETATS_HS.has(dev)) return "OFF";
+  return "NS";
+}
+
+/** Minute de jeu d'un match en cours (null sinon). */
+function minuteDe(fx) {
+  const p = (fx.periods || []).find((x) => x.ticking);
+  if (!p) return null;
+  return p.minutes != null ? p.minutes + (p.time_added || 0) : null;
+}
+
+/** Score courant par participant (buts inscrits à l'instant t). */
+function scoresDe(fx) {
+  const g = {};
+  for (const s of fx.scores || []) {
+    if (s.description === "CURRENT" && s.participant_id != null && s.score) {
+      g[s.participant_id] = s.score.goals;
+    }
+  }
+  return g;
+}
+
+function cotes(fx) {
+  const dom = (fx.participants || []).find((p) => p.meta && p.meta.location === "home");
+  const ext = (fx.participants || []).find((p) => p.meta && p.meta.location === "away");
+  return [dom, ext];
+}
+
+/**
+ * Points disciplinaires UEFA (art. 20.03 du règlement UCL) : plus le total est
+ * bas, mieux l'équipe est classée. Un seul décompte par joueur et par match.
+ *
+ *   carton jaune ................................... 1 pt
+ *   expulsion pour deux cartons jaunes ............. 3 pts
+ *   carton rouge direct ............................ 3 pts
+ *   carton jaune + carton rouge direct ............. 4 pts
+ *
+ * Types SportMonks : 19 = jaune, 20 = rouge direct, 21 = jaune/rouge (2e jaune).
+ */
+function disciplineDepuisEvents(fixtures) {
+  const total = {};
+  for (const fx of fixtures) {
+    const parJoueur = {};
+    for (const ev of fx.events || []) {
+      if (ev.rescinded) continue;
+      const t = ev.type_id;
+      if (t !== 19 && t !== 20 && t !== 21) continue;
+      const qui = ev.player_id != null ? "p" + ev.player_id : "c" + ev.coach_id;
+      const cle = ev.participant_id + ":" + qui;
+      const o = parJoueur[cle] || (parJoueur[cle] = { equipe: ev.participant_id, j: 0, r: 0, jr: 0 });
+      if (t === 19) o.j++;
+      else if (t === 20) o.r++;
+      else o.jr++;
+    }
+    for (const cle in parJoueur) {
+      const o = parJoueur[cle];
+      let pts = 0;
+      if (o.jr >= 1) pts = 3;               // 2e jaune : le premier jaune n'est pas compté en plus
+      else if (o.r >= 1 && o.j >= 1) pts = 4; // jaune puis rouge direct
+      else if (o.r >= 1) pts = 3;
+      else if (o.j >= 1) pts = 1;
+      total[o.equipe] = (total[o.equipe] || 0) + pts;
+    }
+  }
+  return total;
+}
+
+/* ------------------------------------------------------------ Phase finale */
+
+// Libellé SportMonks des stages de phase finale → clé interne.
+const KO_STAGES = [
+  [/play-?off/i,        "po"],
+  [/(1\/8|8th|last 16|round of 16)/i, "r16"],
+  [/(1\/4|quarter)/i,   "qf"],
+  [/(1\/2|semi)/i,      "sf"],
+  [/final/i,            "f"]
+];
+
+function cleDeStage(nom) {
+  for (const [re, cle] of KO_STAGES) {
+    // « Final » matcherait « Quarter-final » : on teste du plus précis au moins précis.
+    if (re.test(nom)) return cle;
+  }
+  return null;
+}
+
+/* ---------------------------------------------------------------- Écriture */
+
+async function main() {
+  console.log("→ Stages de la saison…");
+  const saison = (await getJSON(
+    `${BASE}/seasons/${SEASON_ID}?api_token=${API_TOKEN}&include=stages;rounds`
+  )).data;
+
+  const rounds = {};
+  for (const r of saison.rounds || []) {
+    if (r.stage_id === LEAGUE_STAGE_ID) rounds[r.id] = { n: Number(r.name), start: r.starting_at, end: r.ending_at };
+  }
+  const nbJournees = Object.keys(rounds).length;
+  console.log(`  ${nbJournees} journées de phase de ligue.`);
+
+  // Stages de phase finale déjà créés par SportMonks (tirages faits).
+  const stagesKO = (saison.stages || [])
+    .filter((s) => s.id !== LEAGUE_STAGE_ID && s.starting_at && s.starting_at >= KO_FROM)
+    .map((s) => ({ id: s.id, nom: s.name, cle: cleDeStage(s.name), start: s.starting_at }))
+    .filter((s) => s.cle);
+  console.log(stagesKO.length
+    ? `  Phase finale publiée : ${stagesKO.map((s) => s.nom).join(", ")}.`
+    : "  Phase finale pas encore tirée — l'arbre sera projeté depuis le classement.");
+
+  console.log("→ Matchs de la phase de ligue…");
+  const fixtures = await getAll(
+    `${BASE}/fixtures?api_token=${API_TOKEN}` +
+    `&filters=fixtureSeasons:${SEASON_ID};fixtureStages:${LEAGUE_STAGE_ID}` +
+    `&include=participants;scores;state;periods;events&per_page=50&page=1`
+  );
+  console.log(`  ${fixtures.length} rencontres.`);
+
+  const inconnus = new Set();
+  for (const fx of fixtures) for (const p of fx.participants || []) if (!TEAMS[p.id]) inconnus.add(`${p.id} ${p.name}`);
+  if (inconnus.size) {
+    console.error("✗ Clubs absents de teams.js :", [...inconnus].join(", "));
+    process.exit(1);
+  }
+
+  const discipline = disciplineDepuisEvents(fixtures);
+
+  // --- Journées ---
+  const parJournee = new Map();
+  for (const fx of fixtures) {
+    const r = rounds[fx.round_id];
+    if (!r) continue;
+    const [dom, ext] = cotes(fx);
+    if (!dom || !ext) continue;
+    const g = scoresDe(fx);
+    const st = statutDe(fx);
+    const m = {
+      id: fx.id,
+      iso: new Date(fx.starting_at.replace(" ", "T") + "Z").toISOString(),
+      st,
+      min: st === "LIVE" ? minuteDe(fx) : null,
+      h: TEAMS[dom.id].code,
+      a: TEAMS[ext.id].code,
+      hg: g[dom.id] != null ? g[dom.id] : null,
+      ag: g[ext.id] != null ? g[ext.id] : null
+    };
+    if (!parJournee.has(r.n)) parJournee.set(r.n, { n: r.n, start: r.start, end: r.end, matches: [] });
+    parJournee.get(r.n).matches.push(m);
+  }
+  const matchdays = [...parJournee.values()].sort((a, b) => a.n - b.n);
+  for (const j of matchdays) j.matches.sort((a, b) => a.iso.localeCompare(b.iso) || a.h.localeCompare(b.h));
+
+  // --- Phase finale réelle (si tirée) ---
+  const knockout = {};
+  for (const s of stagesKO) {
+    const fxs = await getAll(
+      `${BASE}/fixtures?api_token=${API_TOKEN}` +
+      `&filters=fixtureSeasons:${SEASON_ID};fixtureStages:${s.id}` +
+      `&include=participants;scores;state;periods&per_page=50&page=1`
+    );
+    const ties = new Map();
+    for (const fx of fxs) {
+      const [dom, ext] = cotes(fx);
+      if (!dom || !ext || !TEAMS[dom.id] || !TEAMS[ext.id]) continue;
+      const g = scoresDe(fx);
+      const cle = fx.aggregate_id || fx.id;
+      const t = ties.get(cle) || { legs: [] };
+      t.legs.push({
+        id: fx.id,
+        iso: new Date(fx.starting_at.replace(" ", "T") + "Z").toISOString(),
+        st: statutDe(fx),
+        leg: fx.leg || "1/1",
+        h: TEAMS[dom.id].code, a: TEAMS[ext.id].code,
+        hg: g[dom.id] != null ? g[dom.id] : null,
+        ag: g[ext.id] != null ? g[ext.id] : null
+      });
+      ties.set(cle, t);
+    }
+    for (const t of ties.values()) t.legs.sort((a, b) => a.iso.localeCompare(b.iso));
+    knockout[s.cle] = [...ties.values()];
+  }
+
+  // --- Un fichier par langue ---
+  const dossier = __dirname;
+  for (const lang of LANGS) {
+    const teams = {};
+    for (const id in TEAMS) {
+      const t = TEAMS[id];
+      teams[t.code] = {
+        name: t[lang], short: t.short, logo: LOGO(t.uefa),
+        light: t.light, dark: t.dark,
+        disc: discipline[id] || 0
+      };
+    }
+    const data = {
+      updatedAt: new Date().toISOString(),
+      season: { id: SEASON_ID, label: "2026/2027" },
+      teams,
+      matchdays,
+      knockout,
+      koDrawn: Object.keys(knockout).length > 0,
+      calendar: Object.fromEntries(Object.entries(KO_CALENDAR).map(([k, v]) => [k, v[lang]]))
+    };
+    const nom = lang === "fr" ? "data.json" : `data-${lang}.json`;
+    fs.writeFileSync(path.join(dossier, nom), JSON.stringify(data));
+    console.log(`✓ ${nom}`);
+  }
+
+  const joues = matchdays.flatMap((j) => j.matches).filter((m) => m.st === "FT").length;
+  const live = matchdays.flatMap((j) => j.matches).filter((m) => m.st === "LIVE" || m.st === "HT").length;
+  console.log(`\n${joues} matchs joués, ${live} en cours, sur ${fixtures.length}.`);
+}
+
+main().catch((e) => {
+  console.error("✗", e.message);
+  process.exit(1);
+});
