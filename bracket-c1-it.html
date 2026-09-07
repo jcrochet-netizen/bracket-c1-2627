@@ -490,23 +490,38 @@
     return { po: po, r16: r16, qf: qf, sf: sf, f: f };
   }
 
-  /** Propage les pronostics : chaque vainqueur retenu remplit le tour suivant. */
+  var TOURS = ["po", "r16", "qf", "sf", "f"];
+
+  /**
+   * Propage les pronostics : chaque vainqueur retenu remplit le tour suivant.
+   *
+   * Un pronostic dit « je vois ce club passer ce tour-ci », pas « je vois ce
+   * club gagner la rencontre n° 3 ». La nuance compte : le classement bouge à
+   * chaque journée, donc les rencontres sont continuellement rebattues. Rangés
+   * par emplacement, les pronostics étaient effacés en bloc au moindre
+   * changement de tête de classement ; rangés par équipe et par tour, ils
+   * survivent tant que le club reste engagé à ce tour.
+   */
   function propager(br, picks) {
-    function gagnant(t) {
-      var p = picks[t.id];
-      return (p && (p === t.a || p === t.b)) ? p : null;
+    function gagnant(t, tour) {
+      var p = picks[tour] || {};
+      var a = t.a && p[t.a], b = t.b && p[t.b];
+      if (a && !b) return t.a;
+      if (b && !a) return t.b;
+      return null;   // aucune des deux, ou les deux : rencontre non tranchée
     }
-    br.r16.forEach(function (t, i) { t.b = gagnant(br.po[i]); });
-    br.qf.forEach(function (t, i) { t.a = gagnant(br.r16[2 * i]); t.b = gagnant(br.r16[2 * i + 1]); });
-    br.sf.forEach(function (t, i) { t.a = gagnant(br.qf[2 * i]); t.b = gagnant(br.qf[2 * i + 1]); });
-    br.f[0].a = gagnant(br.sf[0]); br.f[0].b = gagnant(br.sf[1]);
-    return gagnant(br.f[0]);
+    br.r16.forEach(function (t, i) { t.b = gagnant(br.po[i], "po"); });
+    br.qf.forEach(function (t, i) { t.a = gagnant(br.r16[2 * i], "r16"); t.b = gagnant(br.r16[2 * i + 1], "r16"); });
+    br.sf.forEach(function (t, i) { t.a = gagnant(br.qf[2 * i], "qf"); t.b = gagnant(br.qf[2 * i + 1], "qf"); });
+    br.f[0].a = gagnant(br.sf[0], "sf"); br.f[0].b = gagnant(br.sf[1], "sf");
+    return gagnant(br.f[0], "f");
   }
 
   /* ------------------------------------------------------------------ État */
   var DATA = null, ROWS = [], BR = null, RANK = {};
   var picks = {};
-  try { picks = JSON.parse(store.get("c1b26-picks") || "{}") || {}; } catch (e) { picks = {}; }
+  try { picks = JSON.parse(store.get("c1b26-picks2") || "{}") || {}; } catch (e) { picks = {}; }
+  TOURS.forEach(function (k) { if (!picks[k] || typeof picks[k] !== "object") picks[k] = {}; });
   var mdIdx = 0, focus = null;
   // Replié par défaut : c'est tout l'intérêt. L'état survit au rendu toutes
   // les 3 minutes, sinon la liste se refermerait sous les yeux du lecteur.
@@ -699,7 +714,10 @@
     bAuto.addEventListener("click", function () { remplirAuto(); });
     var bClr = el("button", "btn", T.clear);
     bClr.type = "button";
-    bClr.addEventListener("click", function () { picks = {}; sauverPicks(); rendre(); });
+    bClr.addEventListener("click", function () {
+      picks = {}; TOURS.forEach(function (k) { picks[k] = {}; });
+      sauverPicks(); rendre();
+    });
     tools.appendChild(bAuto); tools.appendChild(bClr);
     hd.appendChild(tools);
     s.appendChild(hd);
@@ -770,7 +788,8 @@
   }
 
   function boiteTie(t, round) {
-    var gagne = picks[t.id] && (picks[t.id] === t.a || picks[t.id] === t.b);
+    var pr = picks[round] || {};
+    var gagne = !!((t.a && pr[t.a]) || (t.b && pr[t.b]));
     var box = el("div", "tie" + (round === "f" ? " final" : "") + (round === "f" && gagne ? " champ" : ""));
     box.appendChild(ligneTie(t, "a", round));
     box.appendChild(ligneTie(t, "b", round));
@@ -794,8 +813,10 @@
       return b;
     }
     var team = DATA.teams[code];
-    var choisi = picks[t.id] === code;
-    var perdant = picks[t.id] && !choisi;
+    var p = picks[round] || {};
+    var autre = side === "a" ? t.b : t.a;
+    var choisi = !!p[code];
+    var perdant = !choisi && !!(autre && p[autre]);
     if (choisi) b.className += " pick";
     if (perdant) b.className += " drop";
     if (focus === code) b.className += " hl";
@@ -803,7 +824,9 @@
     b.appendChild(crest(team));
     b.appendChild(el("span", "nm", team.short));
     b.addEventListener("click", function () {
-      if (picks[t.id] === code) delete picks[t.id]; else picks[t.id] = code;
+      var q = picks[round] || (picks[round] = {});
+      if (q[code]) delete q[code];
+      else { q[code] = 1; if (autre) delete q[autre]; }
       nettoyerPicks();
       sauverPicks();
       rendre();
@@ -811,29 +834,49 @@
     return b;
   }
 
-  /** Un pronostic devenu impossible (le club n'est plus dans ce match) saute. */
+  /**
+   * Un pronostic devenu impossible saute : le classement bouge à chaque
+   * journée, et un club peut quitter la rencontre sur laquelle il avait été
+   * choisi. Les pronostics encore valides, eux, sont conservés tels quels.
+   *
+   * Cinq passes : supprimer un pronostic vide le tour suivant, ce qui peut à
+   * son tour invalider un pronostic plus loin dans l'arbre.
+   *
+   * Le nettoyage est réécrit dans le stockage, sinon les pronostics périmés y
+   * survivraient indéfiniment et seraient relus à chaque ouverture de page.
+   */
   function nettoyerPicks() {
-    for (var tour = 0; tour < 5; tour++) {
+    var avant = JSON.stringify(picks);
+    for (var passe = 0; passe < 5; passe++) {
       propager(BR, picks);
-      ["po", "r16", "qf", "sf", "f"].forEach(function (k) {
+      TOURS.forEach(function (k) {
+        var p = picks[k] || (picks[k] = {});
+        var engages = {};
+        BR[k].forEach(function (t) { if (t.a) engages[t.a] = 1; if (t.b) engages[t.b] = 1; });
+        // un club qui n'est plus engagé à ce tour perd son pronostic
+        Object.keys(p).forEach(function (code) { if (!engages[code]) delete p[code]; });
+        // et si le rebrassage met deux favoris face à face, on rend la main
+        // au lecteur plutôt que de trancher à sa place
         BR[k].forEach(function (t) {
-          var p = picks[t.id];
-          if (p && p !== t.a && p !== t.b) delete picks[t.id];
+          if (t.a && t.b && p[t.a] && p[t.b]) { delete p[t.a]; delete p[t.b]; }
         });
       });
     }
+    if (JSON.stringify(picks) !== avant) sauverPicks();
   }
-  function sauverPicks() { store.set("c1b26-picks", JSON.stringify(picks)); }
+  function sauverPicks() { store.set("c1b26-picks2", JSON.stringify(picks)); }
 
   /** Fait avancer partout la mieux classée — un bracket complet en un clic. */
   function remplirAuto() {
     var rang = RANK;
     picks = {};
-    ["po", "r16", "qf", "sf", "f"].forEach(function (k) {
+    TOURS.forEach(function (k) { picks[k] = {}; });
+    TOURS.forEach(function (k) {
       propager(BR, picks);
       BR[k].forEach(function (t) {
-        if (!t.a || !t.b) { if (t.a || t.b) picks[t.id] = t.a || t.b; return; }
-        picks[t.id] = (rang[t.a] || 99) <= (rang[t.b] || 99) ? t.a : t.b;
+        if (!t.a && !t.b) return;
+        if (!t.a || !t.b) { picks[k][t.a || t.b] = 1; return; }
+        picks[k][(rang[t.a] || 99) <= (rang[t.b] || 99) ? t.a : t.b] = 1;
       });
     });
     sauverPicks();

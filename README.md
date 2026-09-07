@@ -81,9 +81,20 @@ que SportMonks publie les stages correspondants, `fetch-data.js` les détecte to
 et les vraies rencontres remplissent le champ `knockout` du JSON.
 
 Le bouton **« Remplir d'après le classement »** fait avancer partout la mieux classée :
-un bracket complet en un clic, que le lecteur peut ensuite modifier. Les pronostics
-sont gardés dans le `localStorage` du navigateur ; un pronostic devenu impossible
-(le club n'est plus dans cette rencontre) est effacé automatiquement.
+un bracket complet en un clic, que le lecteur peut ensuite modifier.
+
+Les pronostics sont gardés dans le `localStorage` du navigateur, rangés **par tour et
+par équipe** — « je vois ce club passer les 8es » — et non par emplacement dans
+l'arbre. La nuance est tout sauf cosmétique : le classement bouge à chaque journée,
+donc les rencontres sont continuellement rebattues. Rangés par emplacement, les
+pronostics étaient effacés en bloc au moindre changement de tête de classement ; à
+l'essai, **4 matchs relevés suffisaient à en détruire 19 sur 23**. Rangés par équipe,
+le même changement en conserve 12 sur 23, et ceux qui sautent sont ceux dont le club a
+réellement changé de tour.
+
+Deux règles complètent le nettoyage : un club qui n'est plus engagé à un tour y perd
+son pronostic, et si le rebrassage met deux favoris face à face, les deux sont
+relâchés — le lecteur retranche lui-même plutôt que le widget à sa place.
 
 ## Multilingue
 
@@ -176,19 +187,32 @@ Le widget renvoie sa hauteur à la page parente via un message `busa-c1b-height`
 convention que les calendriers Ligue 1 et NBA, avec un préfixe distinct pour qu'ils
 puissent coexister sur une même page.
 
-### Rythme de rafraîchissement
+### Rythme de rafraîchissement : le rendez-vous est pris par le script
 
-`.github/workflows/refresh.yml` — trois passages, jamais pendant les matchs :
+Une première version plaçait deux crons à heure fixe, après la fin supposée des
+matchs. Elle ne tenait pas : en **heure d'hiver**, un cron à 19 h 50 UTC tombait à la
+minute près sur la fin des rencontres de 18 h 45, et celui de 22 h 10 n'avait que
+5 minutes d'avance sur celles de 21 h 00. **Cinq journées sur huit** étaient exposées.
 
-| Cron (UTC) | Quand | Pourquoi |
-| --- | --- | --- |
-| `50 19 * * 2,3,4` | 19 h 50 | après les matchs de 18 h 45 (fin vers 18 h 40 UTC l'été, 19 h 40 l'hiver) |
-| `10 22 * * 2,3,4` | 22 h 10 | après les matchs de 21 h 00 (fin vers 20 h 55 UTC l'été, 21 h 55 l'hiver) |
-| `20 5 * * *` | 5 h 20 | filet quotidien : calendrier, reports, tirages |
+C'est donc `fetch-data.js` qui décide, pas l'horloge. Avant tout appel, il relit le
+`data.json` du passage précédent — les heures de coup d'envoi y sont déjà — et
+n'interroge SportMonks que s'il existe un match **sans résultat dont le coup d'envoi
+remonte à plus de 2 h 05** (90 minutes, 15 de mi-temps, 20 d'arrêts de jeu). Si la
+rencontre traîne au-delà, le passage suivant la rattrape : la constante n'a pas à
+être exacte.
 
-Soit 13 exécutions par semaine, 4 appels API chacune. Les deux horaires de soirée
-tombent après la fin des rencontres **dans les deux régimes horaires**, été comme
-hiver — c'est ce qui permet de n'y passer qu'une fois.
+| Cron (UTC) | Rôle |
+| --- | --- |
+| `*/30 18-23 * * *` | fenêtre des fins de match, **tous les jours** — le portillon rend ces passages quasi gratuits |
+| `20 5 * * *` | filet quotidien, **forcé** : calendrier, reports, tirages |
+
+Passer tous les jours plutôt que les mardis, mercredis et jeudis n'est pas un luxe :
+l'UEFA déplace des rencontres, la finale se joue un samedi, et un match reporté peut
+être rejoué n'importe quand. Le portillon rend ce filet large sans le rendre coûteux —
+la quasi-totalité des exécutions s'arrêtent sans consommer un seul appel d'API.
+
+Résultat : un résultat publié **dans les 30 minutes** suivant le coup de sifflet, pour
+**une poignée d'appels par journée de championnat**.
 
 Le commit n'est écrit que si les données ont réellement changé : `data-changed.js`
 compare les fichiers **sans** leur champ `updatedAt`, sinon le cron produirait un

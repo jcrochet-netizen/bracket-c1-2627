@@ -51,6 +51,16 @@ const LEAGUE_ID = 2;
 const SEASON_ID = 28155;        // Ligue des champions 2026/2027
 const LEAGUE_STAGE_ID = 77484090; // phase de ligue (8 journées)
 const KO_FROM = "2027-02-01";   // les stages de phase finale commencent après cette date
+
+// Un match est considéré fini 2 h 05 après son coup d'envoi : 90 minutes,
+// 15 de mi-temps, et 20 d'arrêts de jeu. Si la rencontre traîne au-delà,
+// l'exécution suivante la rattrape — la constante n'a donc pas à être exacte.
+const DUREE_MATCH = (2 * 60 + 5) * 60 * 1000;
+// Au-delà de 3 jours sans résultat publié, on cesse d'insister à chaque
+// passage : le filet quotidien forcé prend le relais.
+const ABANDON = 3 * 24 * 60 * 60 * 1000;
+
+const FORCE = process.argv.includes("--force") || process.env.FORCE_REFRESH === "true";
 const LANGS = ["fr", "en", "es", "pt", "it"];
 
 // Calendrier officiel UEFA de la phase finale 2026-27 (uefa.com).
@@ -63,6 +73,35 @@ const KO_CALENDAR = {
   sf:  { fr:"27-28 avril & 4-5 mai 2027", en:"27–28 April & 4–5 May 2027",  es:"27-28 de abril y 4-5 de mayo de 2027", pt:"27-28 de abril e 4-5 de maio de 2027", it:"27-28 aprile e 4-5 maggio 2027" },
   f:   { fr:"5 juin 2027 — Metropolitano, Madrid", en:"5 June 2027 — Metropolitano, Madrid", es:"5 de junio de 2027 — Metropolitano, Madrid", pt:"5 de junho de 2027 — Metropolitano, Madrid", it:"5 giugno 2027 — Metropolitano, Madrid" }
 };
+
+/* ------------------------------------------------------------- Portillon
+ * Décide, SANS appeler l'API, s'il y a quelque chose à relever : les heures
+ * de coup d'envoi sont déjà dans le data.json produit au passage précédent.
+ *
+ * C'est ce qui permet de lancer le cron souvent — donc de publier un résultat
+ * vite après le coup de sifflet — sans multiplier les appels SportMonks : la
+ * quasi-totalité des exécutions s'arrêtent ici, sans consommer un seul appel.
+ */
+function aRelever() {
+  let ancien;
+  try {
+    ancien = JSON.parse(fs.readFileSync(path.join(__dirname, "data.json"), "utf8"));
+  } catch (e) {
+    console.log("→ Pas de data.json exploitable : récupération complète.");
+    return true;
+  }
+  const maintenant = Date.now();
+  const dus = (ancien.matchdays || [])
+    .flatMap((j) => j.matches)
+    .filter((m) => {
+      if (m.st !== "NS") return false;          // déjà terminé, ou reporté
+      const fin = new Date(m.iso).getTime() + DUREE_MATCH;
+      return maintenant >= fin && maintenant <= fin + ABANDON;
+    });
+  if (!dus.length) return false;
+  console.log(`→ ${dus.length} match(s) terminé(s) sans résultat publié.`);
+  return true;
+}
 
 /* ------------------------------------------------------------------ HTTP */
 
@@ -207,6 +246,10 @@ function cleDeStage(nom) {
 /* ---------------------------------------------------------------- Écriture */
 
 async function main() {
+  if (!FORCE && !aRelever()) {
+    console.log("Aucun match à relever — aucun appel à SportMonks.");
+    return;
+  }
   console.log("→ Stages de la saison…");
   const saison = (await getJSON(
     `${BASE}/seasons/${SEASON_ID}?api_token=${API_TOKEN}&include=stages;rounds`
