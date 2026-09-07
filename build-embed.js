@@ -145,12 +145,12 @@ chaque coup de sifflet final, et le classement se recalcule dans la foulée.</p>
    Valeurs relevées sur le widget en ligne, liste des matchs repliée — l'état
    par défaut : 2462 px à 900 px de large, 2506 px à 700, 2694 px en mobile.
    Le script ci-dessous remplace ensuite cette réserve par la hauteur exacte. */
-#busa-c1b{min-height:2470px}
-@media (max-width:760px){#busa-c1b{min-height:2520px}}
-@media (max-width:520px){#busa-c1b{min-height:2700px}}
+#busa-c1b-fr{min-height:2470px}
+@media (max-width:760px){#busa-c1b-fr{min-height:2520px}}
+@media (max-width:520px){#busa-c1b-fr{min-height:2700px}}
 </style>
 
-<iframe id="busa-c1b"
+<iframe id="busa-c1b-fr"
         src="${PAGES}/bracket-c1.html"
         title="Bracket LIVE de la Ligue des champions 2026-2027 : les matchs de chaque journée, le classement en direct des 36 clubs et l’arbre de la phase finale"
         loading="lazy"
@@ -172,15 +172,20 @@ chaque coup de sifflet final, et le classement se recalcule dans la foulée.</p>
    ci-dessus, qui est déjà à la bonne hauteur. */
 (function () {
   var ORIGIN = 'https://jcrochet-netizen.github.io';
-  var frame  = document.getElementById('busa-c1b');
+  var frame  = document.getElementById('busa-c1b-fr');
   window.addEventListener('message', function (e) {
     if (e.origin !== ORIGIN) return;
     var d = e.data;
+    // Le type du message est le même pour les cinq langues — c'est le widget
+    // qui l'émet, il ne connaît pas l'identifiant que la page lui donne.
     if (!d || d.type !== 'busa-c1b-height') return;
+    if (!frame) frame = document.getElementById('busa-c1b-fr');
+    if (!frame) return;
+    // D'où la vérification de l'émetteur : sans elle, deux widgets sur une
+    // même page se renverraient leurs hauteurs respectives.
+    if (e.source !== frame.contentWindow) return;
     var h = parseInt(d.height, 10);
     if (!h || h < 1) return;
-    if (!frame) frame = document.getElementById('busa-c1b');
-    if (!frame) return;
     frame.style.height = h + 'px';
     frame.style.minHeight = '0';
   }, false);
@@ -250,3 +255,101 @@ ${jsonLd}
 
 fs.writeFileSync(path.join(__dirname, "embed-wordpress.html"), html);
 console.log(`✓ embed-wordpress.html — journée ${journee.n}, ${journee.matches.length} rencontres balisées`);
+
+/* ------------------------------------------------- Les 5 iframes, une par langue
+ * Bloc autonome par langue : la réserve de hauteur, l'iframe et le script
+ * d'ajustement voyagent ensemble, avec un identifiant propre. Deux langues
+ * peuvent donc cohabiter sur une même page sans se marcher dessus.
+ *
+ * Réserves identiques pour les cinq : mesurées entre 2446 et 2462 px à 900 px
+ * de large, l'écart entre langues est dans le bruit.
+ */
+const LANGUES = [
+  { code:"fr", fichier:"bracket-c1.html",    langAttr:"fr",
+    titre:"Bracket de la Ligue des champions 2026-2027 : les matchs de chaque journée, le classement et l’arbre de la phase finale",
+    lien:"Ouvrir le bracket de la Ligue des champions 2026-2027 en plein écran",
+    js:"le tableau interactif a besoin de JavaScript." },
+  { code:"en", fichier:"bracket-c1-en.html", langAttr:"en",
+    titre:"2026-27 Champions League bracket: every matchday’s fixtures, the 36-club table and the knockout bracket",
+    lien:"Open the 2026-27 Champions League bracket full screen",
+    js:"the interactive table needs JavaScript." },
+  { code:"es", fichier:"bracket-c1-es.html", langAttr:"es",
+    titre:"Cuadro de la Liga de Campeones 2026-2027: los partidos de cada jornada, la clasificación y la fase final",
+    lien:"Abrir el cuadro de la Liga de Campeones 2026-2027 a pantalla completa",
+    js:"la tabla interactiva necesita JavaScript." },
+  { code:"pt", fichier:"bracket-c1-pt.html", langAttr:"pt-BR",
+    titre:"Chaveamento da Liga dos Campeões 2026-2027: os jogos de cada rodada, a classificação e o mata-mata",
+    lien:"Abrir o chaveamento da Liga dos Campeões 2026-2027 em tela cheia",
+    js:"a tabela interativa precisa de JavaScript." },
+  { code:"it", fichier:"bracket-c1-it.html", langAttr:"it",
+    titre:"Tabellone della Champions League 2026-2027: le partite di ogni giornata, la classifica e la fase finale",
+    lien:"Aprire il tabellone della Champions League 2026-2027 a schermo intero",
+    js:"la tabella interattiva ha bisogno di JavaScript." }
+];
+
+const bloc = (L) => {
+  const id = `busa-c1b-${L.code}`;
+  return `<!-- ${L.code.toUpperCase()} — ${PAGES}/${L.fichier} -->
+<link rel="preconnect" href="https://jcrochet-netizen.github.io">
+
+<style>
+#${id}{min-height:2470px}
+@media (max-width:760px){#${id}{min-height:2520px}}
+@media (max-width:520px){#${id}{min-height:2700px}}
+</style>
+
+<iframe id="${id}"
+        src="${PAGES}/${L.fichier}"
+        title="${L.titre}"
+        loading="lazy"
+        scrolling="no"
+        referrerpolicy="strict-origin-when-cross-origin"
+        style="display:block;margin:0 auto;width:100%;max-width:900px;
+               border:0;overflow:hidden"></iframe>
+
+<noscript>
+  <p lang="${L.langAttr}"><a href="${PAGES}/${L.fichier}" rel="noopener">${L.lien}</a> — ${L.js}</p>
+</noscript>
+
+<script>
+(function () {
+  var ORIGIN = 'https://jcrochet-netizen.github.io';
+  var frame  = document.getElementById('${id}');
+  window.addEventListener('message', function (e) {
+    if (e.origin !== ORIGIN) return;
+    var d = e.data;
+    // Type identique pour les cinq langues : c'est le widget qui l'émet, il
+    // ignore l'identifiant que la page donne à son iframe.
+    if (!d || d.type !== 'busa-c1b-height') return;
+    if (!frame) frame = document.getElementById('${id}');
+    if (!frame) return;
+    // D'où la vérification de l'émetteur : sans elle, deux langues posées sur
+    // une même page se renverraient leurs hauteurs respectives.
+    if (e.source !== frame.contentWindow) return;
+    var h = parseInt(d.height, 10);
+    if (!h || h < 1) return;
+    frame.style.height = h + 'px';
+    frame.style.minHeight = '0';
+  }, false);
+})();
+</script>`;
+};
+
+const iframes = `<!-- =========================================================================
+     Bracket Ligue des champions 2026-2027 — l'iframe seule, dans les 5 langues.
+     Généré par : node build-embed.js
+
+     Chaque bloc est AUTONOME : réserve de hauteur, iframe et script d'ajustement
+     voyagent ensemble, avec un identifiant propre à la langue. Deux langues
+     peuvent donc cohabiter sur une même page.
+
+     ⚠ L'iframe seule ne rapporte aucun SEO : Google n'attribue pas le contenu
+       d'une iframe à la page parente. Pour un article destiné à ranker, coller
+       embed-wordpress.html, qui entoure l'iframe du texte indexable.
+     ========================================================================= -->
+
+${LANGUES.map((L) => bloc(L)).join("\n\n\n")}
+`;
+
+fs.writeFileSync(path.join(__dirname, "embed-iframes.html"), iframes);
+console.log(`✓ embed-iframes.html — ${LANGUES.length} langues`);

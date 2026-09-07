@@ -1,0 +1,241 @@
+<!-- =========================================================================
+     Bracket Ligue des champions 2026-2027 — l'iframe seule, dans les 5 langues.
+     Généré par : node build-embed.js
+
+     Chaque bloc est AUTONOME : réserve de hauteur, iframe et script d'ajustement
+     voyagent ensemble, avec un identifiant propre à la langue. Deux langues
+     peuvent donc cohabiter sur une même page.
+
+     ⚠ L'iframe seule ne rapporte aucun SEO : Google n'attribue pas le contenu
+       d'une iframe à la page parente. Pour un article destiné à ranker, coller
+       embed-wordpress.html, qui entoure l'iframe du texte indexable.
+     ========================================================================= -->
+
+<!-- FR — https://jcrochet-netizen.github.io/bracket-c1-2627/bracket-c1.html -->
+<link rel="preconnect" href="https://jcrochet-netizen.github.io">
+
+<style>
+#busa-c1b-fr{min-height:2470px}
+@media (max-width:760px){#busa-c1b-fr{min-height:2520px}}
+@media (max-width:520px){#busa-c1b-fr{min-height:2700px}}
+</style>
+
+<iframe id="busa-c1b-fr"
+        src="https://jcrochet-netizen.github.io/bracket-c1-2627/bracket-c1.html"
+        title="Bracket de la Ligue des champions 2026-2027 : les matchs de chaque journée, le classement et l’arbre de la phase finale"
+        loading="lazy"
+        scrolling="no"
+        referrerpolicy="strict-origin-when-cross-origin"
+        style="display:block;margin:0 auto;width:100%;max-width:900px;
+               border:0;overflow:hidden"></iframe>
+
+<noscript>
+  <p lang="fr"><a href="https://jcrochet-netizen.github.io/bracket-c1-2627/bracket-c1.html" rel="noopener">Ouvrir le bracket de la Ligue des champions 2026-2027 en plein écran</a> — le tableau interactif a besoin de JavaScript.</p>
+</noscript>
+
+<script>
+(function () {
+  var ORIGIN = 'https://jcrochet-netizen.github.io';
+  var frame  = document.getElementById('busa-c1b-fr');
+  window.addEventListener('message', function (e) {
+    if (e.origin !== ORIGIN) return;
+    var d = e.data;
+    // Type identique pour les cinq langues : c'est le widget qui l'émet, il
+    // ignore l'identifiant que la page donne à son iframe.
+    if (!d || d.type !== 'busa-c1b-height') return;
+    if (!frame) frame = document.getElementById('busa-c1b-fr');
+    if (!frame) return;
+    // D'où la vérification de l'émetteur : sans elle, deux langues posées sur
+    // une même page se renverraient leurs hauteurs respectives.
+    if (e.source !== frame.contentWindow) return;
+    var h = parseInt(d.height, 10);
+    if (!h || h < 1) return;
+    frame.style.height = h + 'px';
+    frame.style.minHeight = '0';
+  }, false);
+})();
+</script>
+
+
+<!-- EN — https://jcrochet-netizen.github.io/bracket-c1-2627/bracket-c1-en.html -->
+<link rel="preconnect" href="https://jcrochet-netizen.github.io">
+
+<style>
+#busa-c1b-en{min-height:2470px}
+@media (max-width:760px){#busa-c1b-en{min-height:2520px}}
+@media (max-width:520px){#busa-c1b-en{min-height:2700px}}
+</style>
+
+<iframe id="busa-c1b-en"
+        src="https://jcrochet-netizen.github.io/bracket-c1-2627/bracket-c1-en.html"
+        title="2026-27 Champions League bracket: every matchday’s fixtures, the 36-club table and the knockout bracket"
+        loading="lazy"
+        scrolling="no"
+        referrerpolicy="strict-origin-when-cross-origin"
+        style="display:block;margin:0 auto;width:100%;max-width:900px;
+               border:0;overflow:hidden"></iframe>
+
+<noscript>
+  <p lang="en"><a href="https://jcrochet-netizen.github.io/bracket-c1-2627/bracket-c1-en.html" rel="noopener">Open the 2026-27 Champions League bracket full screen</a> — the interactive table needs JavaScript.</p>
+</noscript>
+
+<script>
+(function () {
+  var ORIGIN = 'https://jcrochet-netizen.github.io';
+  var frame  = document.getElementById('busa-c1b-en');
+  window.addEventListener('message', function (e) {
+    if (e.origin !== ORIGIN) return;
+    var d = e.data;
+    // Type identique pour les cinq langues : c'est le widget qui l'émet, il
+    // ignore l'identifiant que la page donne à son iframe.
+    if (!d || d.type !== 'busa-c1b-height') return;
+    if (!frame) frame = document.getElementById('busa-c1b-en');
+    if (!frame) return;
+    // D'où la vérification de l'émetteur : sans elle, deux langues posées sur
+    // une même page se renverraient leurs hauteurs respectives.
+    if (e.source !== frame.contentWindow) return;
+    var h = parseInt(d.height, 10);
+    if (!h || h < 1) return;
+    frame.style.height = h + 'px';
+    frame.style.minHeight = '0';
+  }, false);
+})();
+</script>
+
+
+<!-- ES — https://jcrochet-netizen.github.io/bracket-c1-2627/bracket-c1-es.html -->
+<link rel="preconnect" href="https://jcrochet-netizen.github.io">
+
+<style>
+#busa-c1b-es{min-height:2470px}
+@media (max-width:760px){#busa-c1b-es{min-height:2520px}}
+@media (max-width:520px){#busa-c1b-es{min-height:2700px}}
+</style>
+
+<iframe id="busa-c1b-es"
+        src="https://jcrochet-netizen.github.io/bracket-c1-2627/bracket-c1-es.html"
+        title="Cuadro de la Liga de Campeones 2026-2027: los partidos de cada jornada, la clasificación y la fase final"
+        loading="lazy"
+        scrolling="no"
+        referrerpolicy="strict-origin-when-cross-origin"
+        style="display:block;margin:0 auto;width:100%;max-width:900px;
+               border:0;overflow:hidden"></iframe>
+
+<noscript>
+  <p lang="es"><a href="https://jcrochet-netizen.github.io/bracket-c1-2627/bracket-c1-es.html" rel="noopener">Abrir el cuadro de la Liga de Campeones 2026-2027 a pantalla completa</a> — la tabla interactiva necesita JavaScript.</p>
+</noscript>
+
+<script>
+(function () {
+  var ORIGIN = 'https://jcrochet-netizen.github.io';
+  var frame  = document.getElementById('busa-c1b-es');
+  window.addEventListener('message', function (e) {
+    if (e.origin !== ORIGIN) return;
+    var d = e.data;
+    // Type identique pour les cinq langues : c'est le widget qui l'émet, il
+    // ignore l'identifiant que la page donne à son iframe.
+    if (!d || d.type !== 'busa-c1b-height') return;
+    if (!frame) frame = document.getElementById('busa-c1b-es');
+    if (!frame) return;
+    // D'où la vérification de l'émetteur : sans elle, deux langues posées sur
+    // une même page se renverraient leurs hauteurs respectives.
+    if (e.source !== frame.contentWindow) return;
+    var h = parseInt(d.height, 10);
+    if (!h || h < 1) return;
+    frame.style.height = h + 'px';
+    frame.style.minHeight = '0';
+  }, false);
+})();
+</script>
+
+
+<!-- PT — https://jcrochet-netizen.github.io/bracket-c1-2627/bracket-c1-pt.html -->
+<link rel="preconnect" href="https://jcrochet-netizen.github.io">
+
+<style>
+#busa-c1b-pt{min-height:2470px}
+@media (max-width:760px){#busa-c1b-pt{min-height:2520px}}
+@media (max-width:520px){#busa-c1b-pt{min-height:2700px}}
+</style>
+
+<iframe id="busa-c1b-pt"
+        src="https://jcrochet-netizen.github.io/bracket-c1-2627/bracket-c1-pt.html"
+        title="Chaveamento da Liga dos Campeões 2026-2027: os jogos de cada rodada, a classificação e o mata-mata"
+        loading="lazy"
+        scrolling="no"
+        referrerpolicy="strict-origin-when-cross-origin"
+        style="display:block;margin:0 auto;width:100%;max-width:900px;
+               border:0;overflow:hidden"></iframe>
+
+<noscript>
+  <p lang="pt-BR"><a href="https://jcrochet-netizen.github.io/bracket-c1-2627/bracket-c1-pt.html" rel="noopener">Abrir o chaveamento da Liga dos Campeões 2026-2027 em tela cheia</a> — a tabela interativa precisa de JavaScript.</p>
+</noscript>
+
+<script>
+(function () {
+  var ORIGIN = 'https://jcrochet-netizen.github.io';
+  var frame  = document.getElementById('busa-c1b-pt');
+  window.addEventListener('message', function (e) {
+    if (e.origin !== ORIGIN) return;
+    var d = e.data;
+    // Type identique pour les cinq langues : c'est le widget qui l'émet, il
+    // ignore l'identifiant que la page donne à son iframe.
+    if (!d || d.type !== 'busa-c1b-height') return;
+    if (!frame) frame = document.getElementById('busa-c1b-pt');
+    if (!frame) return;
+    // D'où la vérification de l'émetteur : sans elle, deux langues posées sur
+    // une même page se renverraient leurs hauteurs respectives.
+    if (e.source !== frame.contentWindow) return;
+    var h = parseInt(d.height, 10);
+    if (!h || h < 1) return;
+    frame.style.height = h + 'px';
+    frame.style.minHeight = '0';
+  }, false);
+})();
+</script>
+
+
+<!-- IT — https://jcrochet-netizen.github.io/bracket-c1-2627/bracket-c1-it.html -->
+<link rel="preconnect" href="https://jcrochet-netizen.github.io">
+
+<style>
+#busa-c1b-it{min-height:2470px}
+@media (max-width:760px){#busa-c1b-it{min-height:2520px}}
+@media (max-width:520px){#busa-c1b-it{min-height:2700px}}
+</style>
+
+<iframe id="busa-c1b-it"
+        src="https://jcrochet-netizen.github.io/bracket-c1-2627/bracket-c1-it.html"
+        title="Tabellone della Champions League 2026-2027: le partite di ogni giornata, la classifica e la fase finale"
+        loading="lazy"
+        scrolling="no"
+        referrerpolicy="strict-origin-when-cross-origin"
+        style="display:block;margin:0 auto;width:100%;max-width:900px;
+               border:0;overflow:hidden"></iframe>
+
+<noscript>
+  <p lang="it"><a href="https://jcrochet-netizen.github.io/bracket-c1-2627/bracket-c1-it.html" rel="noopener">Aprire il tabellone della Champions League 2026-2027 a schermo intero</a> — la tabella interattiva ha bisogno di JavaScript.</p>
+</noscript>
+
+<script>
+(function () {
+  var ORIGIN = 'https://jcrochet-netizen.github.io';
+  var frame  = document.getElementById('busa-c1b-it');
+  window.addEventListener('message', function (e) {
+    if (e.origin !== ORIGIN) return;
+    var d = e.data;
+    // Type identique pour les cinq langues : c'est le widget qui l'émet, il
+    // ignore l'identifiant que la page donne à son iframe.
+    if (!d || d.type !== 'busa-c1b-height') return;
+    if (!frame) frame = document.getElementById('busa-c1b-it');
+    if (!frame) return;
+    // D'où la vérification de l'émetteur : sans elle, deux langues posées sur
+    // une même page se renverraient leurs hauteurs respectives.
+    if (e.source !== frame.contentWindow) return;
+    var h = parseInt(d.height, 10);
+    if (!h || h < 1) return;
+    frame.style.height = h + 'px';
+    frame.style.minHeight = '0';
+  }, false);
+})();
+</script>

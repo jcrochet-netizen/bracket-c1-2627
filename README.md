@@ -154,6 +154,18 @@ node build-embed.js          # la première journée non terminée
 node build-embed.js --j=3    # une journée précise
 ```
 
+Il produit **deux** fichiers : `embed-wordpress.html`, le bloc FR complet avec son
+texte indexable et son balisage, et `embed-iframes.html`, l'iframe seule dans les cinq
+langues. Chaque bloc de langue est autonome — réserve de hauteur, iframe et script
+d'ajustement — et porte un identifiant propre (`busa-c1b-fr`, `-en`…), donc deux
+langues peuvent cohabiter sur une même page.
+
+Le message de hauteur, lui, s'appelle `busa-c1b-height` pour les cinq : c'est le
+widget qui l'émet, et il ignore l'identifiant que la page donne à son iframe. Chaque
+script vérifie donc `e.source === frame.contentWindow` avant d'appliquer la valeur.
+Sans cette vérification, deux widgets sur une même page se renvoient leurs hauteurs
+respectives — constaté à l'essai avant correction.
+
 Pourquoi un générateur : le bloc contient un balisage `SportsEvent`, et la règle
 numéro un des données structurées est de ne décrire que ce qui est **visible dans la
 page**. Produire la liste des rencontres et le JSON-LD depuis la même source rend le
@@ -230,7 +242,8 @@ commit toutes les 10 minutes pour rien.
 | `data*.json` | Matchs + points disciplinaires, par langue |
 | `index.html` | Sélecteur de langue |
 | `build-embed.js` | Génère le bloc WordPress + son balisage schema.org |
-| `embed-wordpress.html` | Bloc à coller dans WordPress (généré) |
+| `embed-wordpress.html` | Bloc FR complet à coller dans WordPress, texte indexable + balisage (généré) |
+| `embed-iframes.html` | L'iframe seule, dans les 5 langues (généré) |
 | `serve.js` | Serveur statique local |
 | `.github/workflows/refresh.yml` | Cron de rafraîchissement |
 | `.github/data-changed.js` | Détecte un vrai changement de données |
