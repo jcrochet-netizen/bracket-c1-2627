@@ -124,6 +124,44 @@ Pages : `https://jcrochet-netizen.github.io/bracket-c1-2627/`
    l'iframe seule : le contenu d'une iframe n'est pas attribué à la page parente
    par Google.
 
+## Le bloc WordPress et son SEO
+
+`embed-wordpress.html` n'est pas écrit à la main, il est **généré** :
+
+```bash
+node build-embed.js          # la première journée non terminée
+node build-embed.js --j=3    # une journée précise
+```
+
+Pourquoi un générateur : le bloc contient un balisage `SportsEvent`, et la règle
+numéro un des données structurées est de ne décrire que ce qui est **visible dans la
+page**. Produire la liste des rencontres et le JSON-LD depuis la même source rend le
+décalage impossible.
+
+Ce que fait le bloc, et pourquoi :
+
+| Choix | Raison |
+| --- | --- |
+| Texte complet autour de l'iframe | Google n'attribue pas le contenu d'une iframe à la page parente. Le texte du bloc **est** le contenu indexé de l'article. |
+| `min-height` calé sur la hauteur réelle (3250 px, 3480 px en mobile) | Sans réserve exacte, l'iframe grandit au chargement et pousse tout le texte suivant : c'est du CLS. Mesuré à **0 px de décalage** sur le widget en ligne. |
+| `loading="lazy"` | L'iframe fait 3200 px : la charger avant qu'elle approche du viewport ralentirait le LCP pour rien. |
+| `title` descriptif | Lu par les lecteurs d'écran, et seul libellé de l'iframe pour les moteurs. |
+| `<link rel="preconnect">` | Ouvre la connexion vers GitHub Pages pendant que le reste de la page se charge. |
+| `<noscript>` avec lien direct | Une iframe vide sans JavaScript n'apporte rien ; le lien, si. |
+| `referrerpolicy="strict-origin-when-cross-origin"` | Ne fuite pas l'URL complète de l'article vers GitHub. |
+| **Pas** de `Article`, `WebPage`, `Organization` ni `BreadcrumbList` | Yoast et Rank Math les produisent déjà pour toute la page. Un doublon est une erreur, pas un bonus. |
+
+Le JSON-LD décrit **une rencontre = un `SportsEvent`**, avec les trois propriétés
+exigées par Google (`name`, `startDate`, `location`) plus `homeTeam`, `awayTeam`,
+`organizer` et le stade avec sa ville et son pays. Pas de `superEvent` : il faudrait
+déclarer la compétition entière comme un Event doté d'un lieu unique, ce qu'elle n'a
+pas.
+
+À vérifier avant publication sur https://search.google.com/test/rich-results.
+
+⚠ Si vous changez de journée affichée, régénérez **la liste et le balisage ensemble**
+avec `build-embed.js`. Ne jamais modifier l'une sans l'autre.
+
 Le widget renvoie sa hauteur à la page parente via un message `busa-c1b-height` — même
 convention que les calendriers Ligue 1 et NBA, avec un préfixe distinct pour qu'ils
 puissent coexister sur une même page.
@@ -153,7 +191,8 @@ commit toutes les 10 minutes pour rien.
 | `bracket-c1-*.html` | Variantes traduites (générées) |
 | `data*.json` | Matchs + points disciplinaires, par langue |
 | `index.html` | Sélecteur de langue |
-| `embed-wordpress.html` | Bloc à coller dans WordPress |
+| `build-embed.js` | Génère le bloc WordPress + son balisage schema.org |
+| `embed-wordpress.html` | Bloc à coller dans WordPress (généré) |
 | `serve.js` | Serveur statique local |
 | `.github/workflows/refresh.yml` | Cron de rafraîchissement |
 | `.github/data-changed.js` | Détecte un vrai changement de données |
@@ -163,6 +202,10 @@ commit toutes les 10 minutes pour rien.
 - SportMonks : ligue `2`, saison `28155` (2026/2027), stage `77484090` (phase de ligue).
 - Les 8 journées sont les rounds `424304` et `424596` à `424602`.
 - Écussons : CDN UEFA (`img.uefa.com`, PNG couleur 100×100), identifiants dans `teams.js`.
+- Stades : `venue.country` de SportMonks, dédupliqués dans `venues` (36 enceintes pour
+  144 rencontres). Les codes `EN`, `SC`, `WA` et `NI` renvoyés pour les nations
+  britanniques ne sont pas des codes ISO 3166-1 valides et sont corrigés en `GB`,
+  sans quoi Google refuserait l'adresse.
 
 **Recoupement** : les 144 rencontres renvoyées par SportMonks — affiche, date **et
 heure de Paris** — sont identiques une à une au calendrier du PDF officiel UEFA extrait

@@ -128,6 +128,22 @@ function scoresDe(fx) {
   return g;
 }
 
+/**
+ * Les stades, pour le balisage schema.org de la page qui héberge le widget :
+ * `SportsEvent` exige un `location` avec une adresse.
+ *
+ * SportMonks renvoie `EN`, `SC`, `WA` et `NI` pour les nations britanniques —
+ * ce ne sont pas des codes ISO 3166-1 valides, Google refuserait l'adresse.
+ */
+const ISO_FIX = { EN: "GB", SC: "GB", WA: "GB", NI: "GB" };
+
+function venueDe(fx) {
+  const v = fx.venue;
+  if (!v) return null;
+  const iso = ((v.country || {}).iso2 || "").toUpperCase();
+  return { id: v.id, n: v.name, c: v.city_name || null, cc: ISO_FIX[iso] || iso || null };
+}
+
 function cotes(fx) {
   const dom = (fx.participants || []).find((p) => p.meta && p.meta.location === "home");
   const ext = (fx.participants || []).find((p) => p.meta && p.meta.location === "away");
@@ -220,7 +236,7 @@ async function main() {
   const fixtures = await getAll(
     `${BASE}/fixtures?api_token=${API_TOKEN}` +
     `&filters=fixtureSeasons:${SEASON_ID};fixtureStages:${LEAGUE_STAGE_ID}` +
-    `&include=participants;scores;state;periods;events&per_page=50&page=1`
+    `&include=participants;scores;state;periods;events;venue.country&per_page=50&page=1`
   );
   console.log(`  ${fixtures.length} rencontres.`);
 
@@ -234,6 +250,10 @@ async function main() {
   const discipline = disciplineDepuisEvents(fixtures);
 
   // --- Journées ---
+  // Les stades sont sortis dans un dictionnaire : 36 enceintes pour
+  // 144 rencontres, les répéter dans chaque match ferait grossir le JSON
+  // pour rien.
+  const venues = {};
   const parJournee = new Map();
   for (const fx of fixtures) {
     const r = rounds[fx.round_id];
@@ -242,8 +262,11 @@ async function main() {
     if (!dom || !ext) continue;
     const g = scoresDe(fx);
     const st = statutDe(fx);
+    const v = venueDe(fx);
+    if (v) venues[v.id] = { n: v.n, c: v.c, cc: v.cc };
     const m = {
       id: fx.id,
+      v: v ? v.id : null,
       iso: new Date(fx.starting_at.replace(" ", "T") + "Z").toISOString(),
       st,
       min: st === "LIVE" ? minuteDe(fx) : null,
@@ -304,6 +327,7 @@ async function main() {
       updatedAt: new Date().toISOString(),
       season: { id: SEASON_ID, label: "2026/2027" },
       teams,
+      venues,
       matchdays,
       knockout,
       koDrawn: Object.keys(knockout).length > 0,

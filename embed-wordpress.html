@@ -1,64 +1,68 @@
-<!-- ============================================================
-     Bracket LIVE Ligue des champions 2026-2027
-     Bloc à coller dans un bloc « HTML personnalisé ».
+<!-- =========================================================================
+     Bracket LIVE Ligue des champions 2026-2027 — bloc à coller dans un bloc
+     WordPress « HTML personnalisé ».
 
-     Le texte ci-dessous est le contenu indexé par Google : ne pas le
-     supprimer, l'iframe seule ne rapporte aucun SEO à la page.
+     Généré par : node build-embed.js
+     Journée affichée : 1
 
-     L'URL de l'iframe pointe déjà sur le dépôt :
-       https://jcrochet-netizen.github.io/bracket-c1-2627/
-     ============================================================ -->
+     ⚠ NE PAS coller l'iframe seule. Le contenu d'une iframe n'est pas attribué
+       à la page parente par Google : le texte ci-dessous EST le contenu indexé
+       de l'article. Le widget, lui, apporte le direct et l'interactivité.
 
-<h2>Ligue des champions 2026-2027 : le calendrier, le classement en direct et le bracket</h2>
+     ⚠ Le balisage schema.org en bas décrit exactement les rencontres listées
+       plus haut. Si vous supprimez la liste, supprimez le JSON-LD ; si vous
+       changez de journée, régénérez les deux avec build-embed.js.
+     ========================================================================= -->
+
+<link rel="preconnect" href="https://jcrochet-netizen.github.io">
+
+<h2>Ligue des champions 2026-2027 : calendrier, classement en direct et bracket</h2>
 
 <p>La phase de ligue de la Ligue des champions 2026-2027 s’ouvre le
 <strong>mardi 8 septembre 2026</strong> et se referme le <strong>mercredi 27 janvier 2027</strong>.
-Les 36 clubs disputent 8 rencontres chacun, contre 8 adversaires différents, réparties
-sur 8 journées : 4 matchs à domicile, 4 à l’extérieur. Un classement unique départage
-ensuite les 36 équipes.</p>
+Les 36 clubs disputent 8 rencontres chacun, contre 8 adversaires différents : 4 à
+domicile, 4 à l’extérieur. Un classement unique départage ensuite les 36 équipes.</p>
 
-<p>Le widget ci-dessous affiche <strong>les 18 matchs de chaque journée</strong> avec leurs
-scores en direct, puis <strong>le classement des 36 clubs recalculé en temps réel</strong>, et
-enfin <strong>l’arbre de la phase finale</strong> tel qu’il se dessinerait à l’instant t. Les
-données viennent de SportMonks et sont rafraîchies automatiquement.</p>
+<p>Le tableau interactif ci-dessous réunit trois choses : <strong>les 18 matchs de chaque
+journée</strong> avec leurs scores en direct, <strong>le classement des 36 clubs recalculé en
+temps réel</strong>, et <strong>l’arbre de la phase finale</strong> tel qu’il se dessinerait à
+l’instant t. Les données viennent de SportMonks et se rafraîchissent toutes les
+10 minutes les soirs de match.</p>
 
-<h3>Comment se qualifie-t-on ?</h3>
+<h3>Le bracket interactif de la Ligue des champions</h3>
 
-<ul>
-  <li><strong>1<sup>er</sup> au 8<sup>e</sup></strong> : qualifiés directement pour les huitièmes de finale.</li>
-  <li><strong>9<sup>e</sup> au 24<sup>e</sup></strong> : barrages en aller-retour, les 16<sup>es</sup> à 24<sup>es</sup> recevant au retour.</li>
-  <li><strong>25<sup>e</sup> au 36<sup>e</sup></strong> : éliminés, sans repêchage en Ligue Europa.</li>
-</ul>
-
-<p>À égalité de points, l’UEFA départage dans l’ordre par la différence de buts, les buts
-marqués, les buts marqués à l’extérieur, le nombre de victoires, les victoires à
-l’extérieur, puis les points disciplinaires. Il n’y a <strong>pas</strong> de confrontation
-directe : les 36 clubs ne s’affrontent pas tous.</p>
-
-<h3>Le calendrier de la phase finale</h3>
-
-<ul>
-  <li><strong>Tirage des barrages</strong> : 29 janvier 2027 — matchs les 16-17 et 23-24 février 2027.</li>
-  <li><strong>Tirage des huitièmes</strong> : 26 février 2027 — matchs les 9-10 et 16-17 mars 2027.</li>
-  <li><strong>Quarts de finale</strong> : 6-7 et 13-14 avril 2027.</li>
-  <li><strong>Demi-finales</strong> : 27-28 avril et 4-5 mai 2027.</li>
-  <li><strong>Finale</strong> : samedi 5 juin 2027, à l’Estadio Metropolitano de Madrid.</li>
-</ul>
-
-<h3>Le bracket interactif</h3>
+<style>
+/* Réserve la hauteur réelle du widget AVANT son chargement, sinon l'iframe
+   grandit d'un coup et pousse tout le texte qui suit — c'est le décalage de
+   mise en page que Google mesure (Cumulative Layout Shift).
+   Valeurs relevées sur le widget en ligne : 3200 px à partir de 700 px de
+   large, 3433 px en mobile (le classement et l'arbre y prennent plus de
+   hauteur). Le script ci-dessous remplace ensuite cette réserve par la
+   hauteur exacte. */
+#busa-c1b{min-height:3250px}
+@media (max-width:700px){#busa-c1b{min-height:3480px}}
+</style>
 
 <iframe id="busa-c1b"
         src="https://jcrochet-netizen.github.io/bracket-c1-2627/bracket-c1.html"
-        title="Bracket LIVE de la Ligue des champions 2026-2027 : matchs, classement en direct et phase finale"
+        title="Bracket LIVE de la Ligue des champions 2026-2027 : les matchs de chaque journée, le classement en direct des 36 clubs et l’arbre de la phase finale"
         loading="lazy"
         scrolling="no"
         referrerpolicy="strict-origin-when-cross-origin"
         style="display:block;margin:0 auto;width:100%;max-width:900px;
-               min-height:1400px;border:0;overflow:hidden"></iframe>
+               border:0;overflow:hidden"></iframe>
+
+<noscript>
+  <p><a href="https://jcrochet-netizen.github.io/bracket-c1-2627/bracket-c1.html" rel="noopener">Ouvrir le bracket de la Ligue
+  des champions 2026-2027 en plein écran</a> — le tableau interactif a besoin de
+  JavaScript pour afficher les scores en direct.</p>
+</noscript>
 
 <script>
-/* Ajuste la hauteur de l'iframe à son contenu. Amélioration progressive : si ce
-   script est filtré par WordPress, l'iframe reste lisible grâce au min-height. */
+/* Ajuste la hauteur de l'iframe à son contenu, pour qu'aucune barre de
+   défilement interne n'apparaisse. Amélioration progressive : si WordPress
+   filtre ce script, l'iframe reste parfaitement lisible grâce au min-height
+   ci-dessus, qui est déjà à la bonne hauteur. */
 (function () {
   var ORIGIN = 'https://jcrochet-netizen.github.io';
   var frame  = document.getElementById('busa-c1b');
@@ -76,6 +80,74 @@ directe : les 36 clubs ne s’affrontent pas tous.</p>
 })();
 </script>
 
+<h3>Les matchs de la 1<sup>re</sup> journée</h3>
+
+<p>Coups d’envoi en heure française. L’UEFA programme en heure d’Europe centrale,
+qui correspond exactement à l’heure de Paris : aucune conversion n’est nécessaire.</p>
+
+<h4>Mardi 8 septembre 2026</h4>
+
+<ul>
+  <li><strong>AEK Athènes – LASK Linz</strong>, 18h45 — OPAP Arena.</li>
+  <li><strong>Club Bruges – Aston Villa</strong>, 18h45 — Jan Breydelstadion, Brugge.</li>
+  <li><strong>Borussia Dortmund – Villarreal</strong>, 21h00 — Signal Iduna Park, Dortmund.</li>
+  <li><strong>LOSC – Real Betis</strong>, 21h00 — Stade Pierre-Mauroy, Villeneuve d'Ascq.</li>
+  <li><strong>FC Porto – Manchester City</strong>, 21h00 — Estádio Do Dragão, Porto.</li>
+  <li><strong>Real Madrid – Inter Milan</strong>, 21h00 — Estadio Santiago Bernabéu, Madrid.</li>
+</ul>
+
+<h4>Mercredi 9 septembre 2026</h4>
+
+<ul>
+  <li><strong>FC Barcelone – Feyenoord</strong>, 18h45 — Camp Nou, Barcelona.</li>
+  <li><strong>Stuttgart – Viking Stavanger</strong>, 18h45 — MHPArena, Stuttgart.</li>
+  <li><strong>Liverpool – Atlético de Madrid</strong>, 21h00 — Anfield, Liverpool.</li>
+  <li><strong>Naples – Arsenal</strong>, 21h00 — Stadio Diego Armando Maradona, Napoli.</li>
+  <li><strong>Paris Saint-Germain – Slovan Bratislava</strong>, 21h00 — Parc des Princes, Paris.</li>
+  <li><strong>Sporting Portugal – Galatasaray</strong>, 21h00 — Estádio José Alvalade, Lisboa.</li>
+</ul>
+
+<h4>Jeudi 10 septembre 2026</h4>
+
+<ul>
+  <li><strong>Fenerbahçe – AS Roma</strong>, 18h45 — Şükrü Saracoğlu Stadium, İstanbul.</li>
+  <li><strong>PSV Eindhoven – Shakhtar Donetsk</strong>, 18h45 — Philips Stadion, Eindhoven.</li>
+  <li><strong>Bayern Munich – Bodø/Glimt</strong>, 21h00 — Allianz Arena, Munich.</li>
+  <li><strong>Como – RB Leipzig</strong>, 21h00 — Stadio Giuseppe Sinigaglia, Como.</li>
+  <li><strong>Manchester United – Sabah FK</strong>, 21h00 — Old Trafford, Manchester.</li>
+  <li><strong>Slavia Prague – RC Lens</strong>, 21h00 — Fortuna Arena, Praha.</li>
+</ul>
+
+<h3>Comment se qualifie-t-on pour la phase finale ?</h3>
+
+<p>Le classement unique des 36 clubs décide de tout, à l’issue des 8 journées :</p>
+
+<ul>
+  <li><strong>Du 1<sup>er</sup> au 8<sup>e</sup></strong> : qualifiés directement pour les huitièmes de finale.</li>
+  <li><strong>Du 9<sup>e</sup> au 24<sup>e</sup></strong> : barrages en aller-retour, les moins bien classés recevant au match aller.</li>
+  <li><strong>Du 25<sup>e</sup> au 36<sup>e</sup></strong> : éliminés, sans repêchage en Ligue Europa.</li>
+</ul>
+
+<h3>Comment les égalités sont-elles départagées ?</h3>
+
+<p>À égalité de points, l’UEFA départage dans cet ordre : différence de buts, buts
+marqués, buts marqués à l’extérieur, nombre de victoires, victoires à l’extérieur,
+puis points disciplinaires. Il n’y a <strong>pas</strong> de confrontation directe, contrairement
+à une phase de groupes classique : les 36 clubs ne s’affrontent pas tous.</p>
+
+<h3>Quand a lieu la finale de la Ligue des champions 2027 ?</h3>
+
+<p>La finale se joue le <strong>samedi 5 juin 2027 à l’Estadio Metropolitano de Madrid</strong>.
+Le calendrier complet de la phase finale :</p>
+
+<ul>
+  <li><strong>Barrages</strong> — tirage le 29 janvier 2027, matchs les 16-17 et 23-24 février 2027.</li>
+  <li><strong>Huitièmes de finale</strong> — tirage le 26 février 2027, matchs les 9-10 et 16-17 mars 2027.</li>
+  <li><strong>Quarts de finale</strong> — 6-7 et 13-14 avril 2027.</li>
+  <li><strong>Demi-finales</strong> — 27-28 avril et 4-5 mai 2027.</li>
+  <li><strong>Finale</strong> — samedi 5 juin 2027, Estadio Metropolitano, Madrid.</li>
+</ul>
+
 <h3>Les 36 clubs de la phase de ligue 2026-2027</h3>
 
 <p>AEK Athènes, Arsenal, AS Roma, Aston Villa, Atlético de Madrid, Bayern Munich,
@@ -87,3 +159,595 @@ Sporting Portugal, Stuttgart, Viking Stavanger, Villarreal.</p>
 
 <p>Trois clubs français sont engagés : le <strong>Paris Saint-Germain</strong>, le
 <strong>LOSC</strong> et le <strong>RC Lens</strong>.</p>
+
+<!-- =========================================================================
+     Données structurées : une fiche SportsEvent par rencontre de la journée
+     1, celles listées plus haut dans la page. Rien d'autre n'est balisé.
+
+     Volontairement ABSENTS de ce bloc, parce que Yoast / Rank Math les
+     produisent déjà pour toute la page et qu'un doublon est une erreur :
+     Article, WebPage, Organization, BreadcrumbList.
+     ========================================================================= -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SportsEvent",
+      "name": "AEK Athènes – LASK Linz",
+      "description": "1re journée de la phase de ligue de la Ligue des champions 2026-2027.",
+      "startDate": "2026-09-08T18:45:00+02:00",
+      "eventStatus": "https://schema.org/EventScheduled",
+      "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+      "location": {
+        "@type": "Place",
+        "name": "OPAP Arena",
+        "address": {
+          "@type": "PostalAddress",
+          "addressCountry": "GR"
+        }
+      },
+      "homeTeam": {
+        "@type": "SportsTeam",
+        "name": "AEK Athènes",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/50129.png"
+      },
+      "awayTeam": {
+        "@type": "SportsTeam",
+        "name": "LASK Linz",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/63405.png"
+      },
+      "organizer": {
+        "@type": "SportsOrganization",
+        "name": "UEFA",
+        "url": "https://www.uefa.com/"
+      }
+    },
+    {
+      "@type": "SportsEvent",
+      "name": "Club Bruges – Aston Villa",
+      "description": "1re journée de la phase de ligue de la Ligue des champions 2026-2027.",
+      "startDate": "2026-09-08T18:45:00+02:00",
+      "eventStatus": "https://schema.org/EventScheduled",
+      "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+      "location": {
+        "@type": "Place",
+        "name": "Jan Breydelstadion",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Brugge",
+          "addressCountry": "BE"
+        }
+      },
+      "homeTeam": {
+        "@type": "SportsTeam",
+        "name": "Club Bruges",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/50043.png"
+      },
+      "awayTeam": {
+        "@type": "SportsTeam",
+        "name": "Aston Villa",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/52683.png"
+      },
+      "organizer": {
+        "@type": "SportsOrganization",
+        "name": "UEFA",
+        "url": "https://www.uefa.com/"
+      }
+    },
+    {
+      "@type": "SportsEvent",
+      "name": "Borussia Dortmund – Villarreal",
+      "description": "1re journée de la phase de ligue de la Ligue des champions 2026-2027.",
+      "startDate": "2026-09-08T21:00:00+02:00",
+      "eventStatus": "https://schema.org/EventScheduled",
+      "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+      "location": {
+        "@type": "Place",
+        "name": "Signal Iduna Park",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Dortmund",
+          "addressCountry": "DE"
+        }
+      },
+      "homeTeam": {
+        "@type": "SportsTeam",
+        "name": "Borussia Dortmund",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/52758.png"
+      },
+      "awayTeam": {
+        "@type": "SportsTeam",
+        "name": "Villarreal",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/70691.png"
+      },
+      "organizer": {
+        "@type": "SportsOrganization",
+        "name": "UEFA",
+        "url": "https://www.uefa.com/"
+      }
+    },
+    {
+      "@type": "SportsEvent",
+      "name": "LOSC – Real Betis",
+      "description": "1re journée de la phase de ligue de la Ligue des champions 2026-2027.",
+      "startDate": "2026-09-08T21:00:00+02:00",
+      "eventStatus": "https://schema.org/EventScheduled",
+      "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+      "location": {
+        "@type": "Place",
+        "name": "Stade Pierre-Mauroy",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Villeneuve d'Ascq",
+          "addressCountry": "FR"
+        }
+      },
+      "homeTeam": {
+        "@type": "SportsTeam",
+        "name": "LOSC",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/75797.png"
+      },
+      "awayTeam": {
+        "@type": "SportsTeam",
+        "name": "Real Betis",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/52265.png"
+      },
+      "organizer": {
+        "@type": "SportsOrganization",
+        "name": "UEFA",
+        "url": "https://www.uefa.com/"
+      }
+    },
+    {
+      "@type": "SportsEvent",
+      "name": "FC Porto – Manchester City",
+      "description": "1re journée de la phase de ligue de la Ligue des champions 2026-2027.",
+      "startDate": "2026-09-08T21:00:00+02:00",
+      "eventStatus": "https://schema.org/EventScheduled",
+      "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+      "location": {
+        "@type": "Place",
+        "name": "Estádio Do Dragão",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Porto",
+          "addressCountry": "PT"
+        }
+      },
+      "homeTeam": {
+        "@type": "SportsTeam",
+        "name": "FC Porto",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/50064.png"
+      },
+      "awayTeam": {
+        "@type": "SportsTeam",
+        "name": "Manchester City",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/52919.png"
+      },
+      "organizer": {
+        "@type": "SportsOrganization",
+        "name": "UEFA",
+        "url": "https://www.uefa.com/"
+      }
+    },
+    {
+      "@type": "SportsEvent",
+      "name": "Real Madrid – Inter Milan",
+      "description": "1re journée de la phase de ligue de la Ligue des champions 2026-2027.",
+      "startDate": "2026-09-08T21:00:00+02:00",
+      "eventStatus": "https://schema.org/EventScheduled",
+      "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+      "location": {
+        "@type": "Place",
+        "name": "Estadio Santiago Bernabéu",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Madrid",
+          "addressCountry": "ES"
+        }
+      },
+      "homeTeam": {
+        "@type": "SportsTeam",
+        "name": "Real Madrid",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/50051.png"
+      },
+      "awayTeam": {
+        "@type": "SportsTeam",
+        "name": "Inter Milan",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/50138.png"
+      },
+      "organizer": {
+        "@type": "SportsOrganization",
+        "name": "UEFA",
+        "url": "https://www.uefa.com/"
+      }
+    },
+    {
+      "@type": "SportsEvent",
+      "name": "FC Barcelone – Feyenoord",
+      "description": "1re journée de la phase de ligue de la Ligue des champions 2026-2027.",
+      "startDate": "2026-09-09T18:45:00+02:00",
+      "eventStatus": "https://schema.org/EventScheduled",
+      "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+      "location": {
+        "@type": "Place",
+        "name": "Camp Nou",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Barcelona",
+          "addressCountry": "ES"
+        }
+      },
+      "homeTeam": {
+        "@type": "SportsTeam",
+        "name": "FC Barcelone",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/50080.png"
+      },
+      "awayTeam": {
+        "@type": "SportsTeam",
+        "name": "Feyenoord",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/52749.png"
+      },
+      "organizer": {
+        "@type": "SportsOrganization",
+        "name": "UEFA",
+        "url": "https://www.uefa.com/"
+      }
+    },
+    {
+      "@type": "SportsEvent",
+      "name": "Stuttgart – Viking Stavanger",
+      "description": "1re journée de la phase de ligue de la Ligue des champions 2026-2027.",
+      "startDate": "2026-09-09T18:45:00+02:00",
+      "eventStatus": "https://schema.org/EventScheduled",
+      "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+      "location": {
+        "@type": "Place",
+        "name": "MHPArena",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Stuttgart",
+          "addressCountry": "DE"
+        }
+      },
+      "homeTeam": {
+        "@type": "SportsTeam",
+        "name": "Stuttgart",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/50107.png"
+      },
+      "awayTeam": {
+        "@type": "SportsTeam",
+        "name": "Viking Stavanger",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/52319.png"
+      },
+      "organizer": {
+        "@type": "SportsOrganization",
+        "name": "UEFA",
+        "url": "https://www.uefa.com/"
+      }
+    },
+    {
+      "@type": "SportsEvent",
+      "name": "Liverpool – Atlético de Madrid",
+      "description": "1re journée de la phase de ligue de la Ligue des champions 2026-2027.",
+      "startDate": "2026-09-09T21:00:00+02:00",
+      "eventStatus": "https://schema.org/EventScheduled",
+      "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+      "location": {
+        "@type": "Place",
+        "name": "Anfield",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Liverpool",
+          "addressCountry": "GB"
+        }
+      },
+      "homeTeam": {
+        "@type": "SportsTeam",
+        "name": "Liverpool",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/7889.png"
+      },
+      "awayTeam": {
+        "@type": "SportsTeam",
+        "name": "Atlético de Madrid",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/50124.png"
+      },
+      "organizer": {
+        "@type": "SportsOrganization",
+        "name": "UEFA",
+        "url": "https://www.uefa.com/"
+      }
+    },
+    {
+      "@type": "SportsEvent",
+      "name": "Naples – Arsenal",
+      "description": "1re journée de la phase de ligue de la Ligue des champions 2026-2027.",
+      "startDate": "2026-09-09T21:00:00+02:00",
+      "eventStatus": "https://schema.org/EventScheduled",
+      "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+      "location": {
+        "@type": "Place",
+        "name": "Stadio Diego Armando Maradona",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Napoli",
+          "addressCountry": "IT"
+        }
+      },
+      "homeTeam": {
+        "@type": "SportsTeam",
+        "name": "Naples",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/50136.png"
+      },
+      "awayTeam": {
+        "@type": "SportsTeam",
+        "name": "Arsenal",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/52280.png"
+      },
+      "organizer": {
+        "@type": "SportsOrganization",
+        "name": "UEFA",
+        "url": "https://www.uefa.com/"
+      }
+    },
+    {
+      "@type": "SportsEvent",
+      "name": "Paris Saint-Germain – Slovan Bratislava",
+      "description": "1re journée de la phase de ligue de la Ligue des champions 2026-2027.",
+      "startDate": "2026-09-09T21:00:00+02:00",
+      "eventStatus": "https://schema.org/EventScheduled",
+      "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+      "location": {
+        "@type": "Place",
+        "name": "Parc des Princes",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Paris",
+          "addressCountry": "FR"
+        }
+      },
+      "homeTeam": {
+        "@type": "SportsTeam",
+        "name": "Paris Saint-Germain",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/52747.png"
+      },
+      "awayTeam": {
+        "@type": "SportsTeam",
+        "name": "Slovan Bratislava",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/52797.png"
+      },
+      "organizer": {
+        "@type": "SportsOrganization",
+        "name": "UEFA",
+        "url": "https://www.uefa.com/"
+      }
+    },
+    {
+      "@type": "SportsEvent",
+      "name": "Sporting Portugal – Galatasaray",
+      "description": "1re journée de la phase de ligue de la Ligue des champions 2026-2027.",
+      "startDate": "2026-09-09T21:00:00+02:00",
+      "eventStatus": "https://schema.org/EventScheduled",
+      "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+      "location": {
+        "@type": "Place",
+        "name": "Estádio José Alvalade",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Lisboa",
+          "addressCountry": "PT"
+        }
+      },
+      "homeTeam": {
+        "@type": "SportsTeam",
+        "name": "Sporting Portugal",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/50149.png"
+      },
+      "awayTeam": {
+        "@type": "SportsTeam",
+        "name": "Galatasaray",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/50067.png"
+      },
+      "organizer": {
+        "@type": "SportsOrganization",
+        "name": "UEFA",
+        "url": "https://www.uefa.com/"
+      }
+    },
+    {
+      "@type": "SportsEvent",
+      "name": "Fenerbahçe – AS Roma",
+      "description": "1re journée de la phase de ligue de la Ligue des champions 2026-2027.",
+      "startDate": "2026-09-10T18:45:00+02:00",
+      "eventStatus": "https://schema.org/EventScheduled",
+      "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+      "location": {
+        "@type": "Place",
+        "name": "Şükrü Saracoğlu Stadium",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "İstanbul",
+          "addressCountry": "TR"
+        }
+      },
+      "homeTeam": {
+        "@type": "SportsTeam",
+        "name": "Fenerbahçe",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/52692.png"
+      },
+      "awayTeam": {
+        "@type": "SportsTeam",
+        "name": "AS Roma",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/50137.png"
+      },
+      "organizer": {
+        "@type": "SportsOrganization",
+        "name": "UEFA",
+        "url": "https://www.uefa.com/"
+      }
+    },
+    {
+      "@type": "SportsEvent",
+      "name": "PSV Eindhoven – Shakhtar Donetsk",
+      "description": "1re journée de la phase de ligue de la Ligue des champions 2026-2027.",
+      "startDate": "2026-09-10T18:45:00+02:00",
+      "eventStatus": "https://schema.org/EventScheduled",
+      "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+      "location": {
+        "@type": "Place",
+        "name": "Philips Stadion",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Eindhoven",
+          "addressCountry": "NL"
+        }
+      },
+      "homeTeam": {
+        "@type": "SportsTeam",
+        "name": "PSV Eindhoven",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/50062.png"
+      },
+      "awayTeam": {
+        "@type": "SportsTeam",
+        "name": "Shakhtar Donetsk",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/52707.png"
+      },
+      "organizer": {
+        "@type": "SportsOrganization",
+        "name": "UEFA",
+        "url": "https://www.uefa.com/"
+      }
+    },
+    {
+      "@type": "SportsEvent",
+      "name": "Bayern Munich – Bodø/Glimt",
+      "description": "1re journée de la phase de ligue de la Ligue des champions 2026-2027.",
+      "startDate": "2026-09-10T21:00:00+02:00",
+      "eventStatus": "https://schema.org/EventScheduled",
+      "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+      "location": {
+        "@type": "Place",
+        "name": "Allianz Arena",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Munich",
+          "addressCountry": "DE"
+        }
+      },
+      "homeTeam": {
+        "@type": "SportsTeam",
+        "name": "Bayern Munich",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/50037.png"
+      },
+      "awayTeam": {
+        "@type": "SportsTeam",
+        "name": "Bodø/Glimt",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/59333.png"
+      },
+      "organizer": {
+        "@type": "SportsOrganization",
+        "name": "UEFA",
+        "url": "https://www.uefa.com/"
+      }
+    },
+    {
+      "@type": "SportsEvent",
+      "name": "Como – RB Leipzig",
+      "description": "1re journée de la phase de ligue de la Ligue des champions 2026-2027.",
+      "startDate": "2026-09-10T21:00:00+02:00",
+      "eventStatus": "https://schema.org/EventScheduled",
+      "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+      "location": {
+        "@type": "Place",
+        "name": "Stadio Giuseppe Sinigaglia",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Como",
+          "addressCountry": "IT"
+        }
+      },
+      "homeTeam": {
+        "@type": "SportsTeam",
+        "name": "Como",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/79946.png"
+      },
+      "awayTeam": {
+        "@type": "SportsTeam",
+        "name": "RB Leipzig",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/2603790.png"
+      },
+      "organizer": {
+        "@type": "SportsOrganization",
+        "name": "UEFA",
+        "url": "https://www.uefa.com/"
+      }
+    },
+    {
+      "@type": "SportsEvent",
+      "name": "Manchester United – Sabah FK",
+      "description": "1re journée de la phase de ligue de la Ligue des champions 2026-2027.",
+      "startDate": "2026-09-10T21:00:00+02:00",
+      "eventStatus": "https://schema.org/EventScheduled",
+      "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+      "location": {
+        "@type": "Place",
+        "name": "Old Trafford",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Manchester",
+          "addressCountry": "GB"
+        }
+      },
+      "homeTeam": {
+        "@type": "SportsTeam",
+        "name": "Manchester United",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/52682.png"
+      },
+      "awayTeam": {
+        "@type": "SportsTeam",
+        "name": "Sabah FK",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/2609356.png"
+      },
+      "organizer": {
+        "@type": "SportsOrganization",
+        "name": "UEFA",
+        "url": "https://www.uefa.com/"
+      }
+    },
+    {
+      "@type": "SportsEvent",
+      "name": "Slavia Prague – RC Lens",
+      "description": "1re journée de la phase de ligue de la Ligue des champions 2026-2027.",
+      "startDate": "2026-09-10T21:00:00+02:00",
+      "eventStatus": "https://schema.org/EventScheduled",
+      "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+      "location": {
+        "@type": "Place",
+        "name": "Fortuna Arena",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Praha",
+          "addressCountry": "CZ"
+        }
+      },
+      "homeTeam": {
+        "@type": "SportsTeam",
+        "name": "Slavia Prague",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/52498.png"
+      },
+      "awayTeam": {
+        "@type": "SportsTeam",
+        "name": "RC Lens",
+        "logo": "https://img.uefa.com/imgml/TP/teams/logos/100x100/52277.png"
+      },
+      "organizer": {
+        "@type": "SportsOrganization",
+        "name": "UEFA",
+        "url": "https://www.uefa.com/"
+      }
+    }
+  ]
+}
+</script>
