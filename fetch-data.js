@@ -11,8 +11,12 @@
  * client : le token n'est JAMAIS exposé.
  *
  * Ce script ne classe PAS les équipes — il livre les matchs bruts et les points
- * disciplinaires. Le classement est calculé dans le widget, ce qui permet la
- * bascule « inclure les matchs en cours » sans deuxième jeu de données.
+ * disciplinaires. Le classement est calculé dans le widget.
+ *
+ * PAS DE SCORE EN DIRECT, volontairement. Un match n'a de score que lorsqu'il
+ * est TERMINÉ : suivre les rencontres en cours obligerait à interroger l'API
+ * toutes les dix minutes chaque soir de C1, pour un coût sans rapport avec le
+ * service rendu. Le cron ne passe donc qu'après les coups de sifflet final.
  *
  * Il détecte aussi automatiquement les stages de la phase finale (barrages,
  * 8es, quarts, demies, finale) dès que l'UEFA les tire et que SportMonks les
@@ -94,30 +98,22 @@ async function getAll(url) {
 
 // Un match est joué (compte au classement) dans ces états.
 const ETATS_JOUES = new Set(["FT", "AET", "FT_PEN", "AWARDED", "WO"]);
-// Un match est en cours dans ceux-là.
-const ETATS_LIVE = new Set([
-  "INPLAY_1ST_HALF", "INPLAY_2ND_HALF", "HT", "BREAK",
-  "INPLAY_ET", "INPLAY_ET_2ND_HALF", "PEN_BREAK", "INPLAY_PENALTIES", "EXTRA_TIME_BREAK"
-]);
 // Et reporté / annulé dans ceux-là : ni joué, ni à venir.
 const ETATS_HS = new Set(["POSTPONED", "CANCELLED", "SUSPENDED", "ABANDONED", "INTERRUPTED", "DELETED"]);
 
+/**
+ * Trois états seulement : terminé, reporté, à venir. Une rencontre en cours
+ * est rangée avec les matchs à venir — elle n'a pas encore de résultat, et le
+ * widget affiche simplement son heure de coup d'envoi.
+ */
 function statutDe(fx) {
   const dev = (fx.state && fx.state.developer_name) || "NS";
   if (ETATS_JOUES.has(dev)) return "FT";
-  if (ETATS_LIVE.has(dev)) return dev === "HT" ? "HT" : "LIVE";
   if (ETATS_HS.has(dev)) return "OFF";
   return "NS";
 }
 
-/** Minute de jeu d'un match en cours (null sinon). */
-function minuteDe(fx) {
-  const p = (fx.periods || []).find((x) => x.ticking);
-  if (!p) return null;
-  return p.minutes != null ? p.minutes + (p.time_added || 0) : null;
-}
-
-/** Score courant par participant (buts inscrits à l'instant t). */
+/** Score final par participant. */
 function scoresDe(fx) {
   const g = {};
   for (const s of fx.scores || []) {
@@ -236,7 +232,7 @@ async function main() {
   const fixtures = await getAll(
     `${BASE}/fixtures?api_token=${API_TOKEN}` +
     `&filters=fixtureSeasons:${SEASON_ID};fixtureStages:${LEAGUE_STAGE_ID}` +
-    `&include=participants;scores;state;periods;events;venue.country&per_page=50&page=1`
+    `&include=participants;scores;state;events;venue.country&per_page=50&page=1`
   );
   console.log(`  ${fixtures.length} rencontres.`);
 
@@ -264,16 +260,17 @@ async function main() {
     const st = statutDe(fx);
     const v = venueDe(fx);
     if (v) venues[v.id] = { n: v.n, c: v.c, cc: v.cc };
+    // Le score n'est publié que pour un match terminé : jamais de score partiel
+    // dans le JSON, même si l'API en renvoie un pour une rencontre en cours.
     const m = {
       id: fx.id,
       v: v ? v.id : null,
       iso: new Date(fx.starting_at.replace(" ", "T") + "Z").toISOString(),
       st,
-      min: st === "LIVE" ? minuteDe(fx) : null,
       h: TEAMS[dom.id].code,
       a: TEAMS[ext.id].code,
-      hg: g[dom.id] != null ? g[dom.id] : null,
-      ag: g[ext.id] != null ? g[ext.id] : null
+      hg: st === "FT" && g[dom.id] != null ? g[dom.id] : null,
+      ag: st === "FT" && g[ext.id] != null ? g[ext.id] : null
     };
     if (!parJournee.has(r.n)) parJournee.set(r.n, { n: r.n, start: r.start, end: r.end, matches: [] });
     parJournee.get(r.n).matches.push(m);
@@ -287,7 +284,7 @@ async function main() {
     const fxs = await getAll(
       `${BASE}/fixtures?api_token=${API_TOKEN}` +
       `&filters=fixtureSeasons:${SEASON_ID};fixtureStages:${s.id}` +
-      `&include=participants;scores;state;periods&per_page=50&page=1`
+      `&include=participants;scores;state&per_page=50&page=1`
     );
     const ties = new Map();
     for (const fx of fxs) {
@@ -296,14 +293,15 @@ async function main() {
       const g = scoresDe(fx);
       const cle = fx.aggregate_id || fx.id;
       const t = ties.get(cle) || { legs: [] };
+      const stLeg = statutDe(fx);
       t.legs.push({
         id: fx.id,
         iso: new Date(fx.starting_at.replace(" ", "T") + "Z").toISOString(),
-        st: statutDe(fx),
+        st: stLeg,
         leg: fx.leg || "1/1",
         h: TEAMS[dom.id].code, a: TEAMS[ext.id].code,
-        hg: g[dom.id] != null ? g[dom.id] : null,
-        ag: g[ext.id] != null ? g[ext.id] : null
+        hg: stLeg === "FT" && g[dom.id] != null ? g[dom.id] : null,
+        ag: stLeg === "FT" && g[ext.id] != null ? g[ext.id] : null
       });
       ties.set(cle, t);
     }
@@ -339,8 +337,8 @@ async function main() {
   }
 
   const joues = matchdays.flatMap((j) => j.matches).filter((m) => m.st === "FT").length;
-  const live = matchdays.flatMap((j) => j.matches).filter((m) => m.st === "LIVE" || m.st === "HT").length;
-  console.log(`\n${joues} matchs joués, ${live} en cours, sur ${fixtures.length}.`);
+  const reportes = matchdays.flatMap((j) => j.matches).filter((m) => m.st === "OFF").length;
+  console.log(`\n${joues} matchs terminés sur ${fixtures.length}` + (reportes ? `, ${reportes} reporté(s).` : "."));
 }
 
 main().catch((e) => {

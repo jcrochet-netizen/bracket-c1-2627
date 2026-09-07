@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bracket AO VIVO da Liga dos Campeões 2026-2027 — jogos e classificação</title>
-<meta name="description" content="As 8 rodadas da fase de liga da Liga dos Campeões 2026-2027, a classificação dos 36 clubes ao vivo e o chaveamento do mata-mata projetado em tempo real.">
+<title>Liga dos Campeões 2026-2027: jogos, resultados, classificação e chaveamento</title>
+<meta name="description" content="As 8 rodadas da fase de liga da Liga dos Campeões 2026-2027, os resultados, a classificação dos 36 clubes e o chaveamento do mata-mata.">
 <meta name="robots" content="noindex, nofollow">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_BR">
-<meta property="og:title" content="Bracket AO VIVO Liga dos Campeões 2026-2027">
-<meta property="og:description" content="Jogos rodada a rodada, classificação ao vivo dos 36 clubes e chaveamento do mata-mata atualizado automaticamente.">
+<meta property="og:title" content="Liga dos Campeões 2026-2027 — jogos, classificação e chaveamento">
+<meta property="og:description" content="Jogos rodada a rodada, resultados, classificação dos 36 clubes e chaveamento do mata-mata atualizado automaticamente.">
 </head>
 <body style="margin:0;padding:0;background:#fff;">
 
@@ -69,11 +69,6 @@
 .c1b .eyebrow{font-size:.62rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--ink3);}
 .c1b .hd-t{font-size:1.15rem; font-weight:650; letter-spacing:-.02em; line-height:1.2;}
 .c1b .hd-meta{display:flex; align-items:center; gap:.45rem; font-size:.72rem; color:var(--ink3); white-space:nowrap;}
-.c1b .dot{width:.5rem; height:.5rem; border-radius:50%; background:var(--live); flex:none;
-  animation:c1b-pulse 1.9s infinite;}
-@keyframes c1b-pulse{
-  0%{box-shadow:0 0 0 0 rgba(217,45,32,.55)} 70%{box-shadow:0 0 0 .42rem rgba(217,45,32,0)} 100%{box-shadow:0 0 0 0 rgba(217,45,32,0)}
-}
 
 /* ------------------------------------------------------------ Sections */
 .c1b .sec{padding:1rem; border-top:1px solid var(--ln);}
@@ -95,11 +90,6 @@
 }
 .c1b .md-nav button:hover{background:var(--sf2); color:var(--ink);}
 .c1b .md-nav button[aria-pressed="true"]{background:var(--acc-soft); border-color:var(--acc); color:var(--acc);}
-.c1b .md-nav button.is-live{position:relative;}
-.c1b .md-nav button.is-live::after{
-  content:""; position:absolute; top:.22rem; right:.3rem; width:.34rem; height:.34rem;
-  border-radius:50%; background:var(--live);
-}
 .c1b .md-sub{font-size:.74rem; color:var(--ink3); margin-bottom:.5rem;}
 
 /* --------------------------------------------------------------- Matchs */
@@ -132,8 +122,6 @@
 .c1b .sc .t{font-size:.82rem; font-weight:600; color:var(--ink2);}
 .c1b .sc .st{display:block; font-size:.58rem; font-weight:700; letter-spacing:.06em;
   text-transform:uppercase; color:var(--ink3); margin-top:.05rem;}
-.c1b .sc.live{background:rgba(217,45,32,.10);}
-.c1b .sc.live .st{color:var(--live);}
 .c1b .sc.off .t{text-decoration:line-through;}
 .c1b .more{
   display:flex; align-items:center; justify-content:center; gap:.45rem;
@@ -153,11 +141,6 @@
 
 /* ----------------------------------------------------------- Classement */
 .c1b .tools{display:flex; align-items:center; gap:.5rem; flex-wrap:wrap;}
-.c1b .sw{display:inline-flex; align-items:center; gap:.4rem; font-size:.72rem; color:var(--ink2);
-  border:1px solid var(--ln); background:var(--sf); border-radius:20px; padding:.24rem .6rem;}
-.c1b .sw[aria-pressed="true"]{border-color:var(--acc); color:var(--acc); background:var(--acc-soft);}
-.c1b .sw i{width:.55rem; height:.55rem; border-radius:50%; background:var(--ink3); display:inline-block;}
-.c1b .sw[aria-pressed="true"] i{background:var(--acc);}
 
 .c1b table{width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums;}
 .c1b thead th{
@@ -304,13 +287,13 @@
   /* ------------------------------------------------------------------ i18n */
   var L10N = {
     fr:{ locale:"fr-FR", tz:"Europe/Paris",
-      eyebrow:"Ligue des champions 2026-2027", title:"Bracket LIVE",
+      eyebrow:"Ligue des champions 2026-2027", title:"Calendrier, classement et bracket",
       loading:"Chargement des données…", error:"Données indisponibles pour le moment.",
-      updated:"Mis à jour", live:"En direct", ht:"MT", ft:"Fin", off:"Reporté",
+      updated:"Mis à jour", ft:"Fin", off:"Reporté",
       mdTitle:"Les matchs, journée par journée", md:"J", matchday:"Journée",
       seeAllR:"Voir tous les résultats", seeAllM:"Voir tous les matchs", collapse:"Réduire", nMatches:"matchs",
       played:"joués", of:"sur",
-      stTitle:"Classement en direct", withLive:"Matchs en cours inclus",
+      stTitle:"Le classement",
       cPos:"#", cClub:"Club", cP:"J", cW:"G", cD:"N", cL:"P", cGF:"BP", cGA:"BC", cGD:"+/−", cPts:"Pts", cForm:"Forme", fW:"V", fD:"N", fL:"D",
       zOk:"1-8 · qualifiés pour les 8es", zPo:"9-24 · barrages", zOut:"25-36 · éliminés",
       noGames:"Aucun match joué : les 36 clubs sont à égalité et listés par ordre alphabétique. Le classement prendra forme dès la 1re journée.",
@@ -322,13 +305,13 @@
       outTitle:"Éliminés (25e-36e)", scroll:"Faites défiler pour voir tout l'arbre",
       footer:"Données SportMonks, actualisées automatiquement. Classement calculé selon les critères UEFA : points, différence de buts, buts marqués, buts marqués à l'extérieur, victoires, victoires à l'extérieur, points disciplinaires." },
     en:{ locale:"en-GB", tz:"Europe/London",
-      eyebrow:"UEFA Champions League 2026-27", title:"LIVE Bracket",
+      eyebrow:"UEFA Champions League 2026-27", title:"Fixtures, table and bracket",
       loading:"Loading data…", error:"Data unavailable right now.",
-      updated:"Updated", live:"Live", ht:"HT", ft:"FT", off:"Postponed",
+      updated:"Updated", ft:"FT", off:"Postponed",
       mdTitle:"Fixtures, matchday by matchday", md:"MD", matchday:"Matchday",
       seeAllR:"See all results", seeAllM:"See all fixtures", collapse:"Collapse", nMatches:"matches",
       played:"played", of:"of",
-      stTitle:"Live league table", withLive:"Include matches in progress",
+      stTitle:"The table",
       cPos:"#", cClub:"Club", cP:"P", cW:"W", cD:"D", cL:"L", cGF:"GF", cGA:"GA", cGD:"+/−", cPts:"Pts", cForm:"Form", fW:"W", fD:"D", fL:"L",
       zOk:"1-8 · straight to the last 16", zPo:"9-24 · knockout play-offs", zOut:"25-36 · eliminated",
       noGames:"No matches played yet: all 36 clubs are level and listed alphabetically. The table takes shape from matchday 1.",
@@ -340,13 +323,13 @@
       outTitle:"Eliminated (25th-36th)", scroll:"Scroll to see the whole bracket",
       footer:"SportMonks data, refreshed automatically. Table sorted by the UEFA criteria: points, goal difference, goals scored, away goals, wins, away wins, disciplinary points." },
     es:{ locale:"es-ES", tz:"Europe/Madrid",
-      eyebrow:"Liga de Campeones 2026-2027", title:"Bracket EN DIRECTO",
+      eyebrow:"Liga de Campeones 2026-2027", title:"Partidos, clasificación y cuadro",
       loading:"Cargando datos…", error:"Datos no disponibles por ahora.",
-      updated:"Actualizado", live:"En directo", ht:"DES", ft:"Final", off:"Aplazado",
+      updated:"Actualizado", ft:"Final", off:"Aplazado",
       mdTitle:"Los partidos, jornada a jornada", md:"J", matchday:"Jornada",
       seeAllR:"Ver todos los resultados", seeAllM:"Ver todos los partidos", collapse:"Reducir", nMatches:"partidos",
       played:"jugados", of:"de",
-      stTitle:"Clasificación en directo", withLive:"Incluir partidos en juego",
+      stTitle:"La clasificación",
       cPos:"#", cClub:"Club", cP:"PJ", cW:"G", cD:"E", cL:"P", cGF:"GF", cGA:"GC", cGD:"+/−", cPts:"Pts", cForm:"Forma", fW:"G", fD:"E", fL:"P",
       zOk:"1-8 · a octavos", zPo:"9-24 · play-offs", zOut:"25-36 · eliminados",
       noGames:"Ningún partido jugado: los 36 clubes están empatados y aparecen por orden alfabético. La clasificación tomará forma en la 1.ª jornada.",
@@ -358,13 +341,13 @@
       outTitle:"Eliminados (25.º-36.º)", scroll:"Desliza para ver todo el cuadro",
       footer:"Datos de SportMonks, actualizados automáticamente. Clasificación según los criterios UEFA: puntos, diferencia de goles, goles a favor, goles fuera de casa, victorias, victorias fuera, puntos disciplinarios." },
     pt:{ locale:"pt-BR", tz:"America/Sao_Paulo",
-      eyebrow:"Liga dos Campeões 2026-2027", title:"Bracket AO VIVO",
+      eyebrow:"Liga dos Campeões 2026-2027", title:"Jogos, classificação e chaveamento",
       loading:"Carregando dados…", error:"Dados indisponíveis no momento.",
-      updated:"Atualizado", live:"Ao vivo", ht:"INT", ft:"Fim", off:"Adiado",
+      updated:"Atualizado", ft:"Fim", off:"Adiado",
       mdTitle:"Os jogos, rodada a rodada", md:"R", matchday:"Rodada",
       seeAllR:"Ver todos os resultados", seeAllM:"Ver todos os jogos", collapse:"Recolher", nMatches:"jogos",
       played:"jogados", of:"de",
-      stTitle:"Classificação ao vivo", withLive:"Incluir jogos em andamento",
+      stTitle:"A classificação",
       cPos:"#", cClub:"Clube", cP:"J", cW:"V", cD:"E", cL:"D", cGF:"GP", cGA:"GC", cGD:"+/−", cPts:"Pts", cForm:"Forma", fW:"V", fD:"E", fL:"D",
       zOk:"1-8 · direto às oitavas", zPo:"9-24 · play-offs", zOut:"25-36 · eliminados",
       noGames:"Nenhum jogo disputado: os 36 clubes estão empatados e aparecem em ordem alfabética. A classificação ganha forma a partir da 1ª rodada.",
@@ -376,13 +359,13 @@
       outTitle:"Eliminados (25º-36º)", scroll:"Arraste para ver o chaveamento inteiro",
       footer:"Dados SportMonks, atualizados automaticamente. Classificação pelos critérios da UEFA: pontos, saldo de gols, gols marcados, gols fora, vitórias, vitórias fora, pontos disciplinares." },
     it:{ locale:"it-IT", tz:"Europe/Rome",
-      eyebrow:"Champions League 2026-2027", title:"Bracket LIVE",
+      eyebrow:"Champions League 2026-2027", title:"Partite, classifica e tabellone",
       loading:"Caricamento dati…", error:"Dati non disponibili al momento.",
-      updated:"Aggiornato", live:"Live", ht:"INT", ft:"Fine", off:"Rinviata",
+      updated:"Aggiornato", ft:"Fine", off:"Rinviata",
       mdTitle:"Le partite, giornata per giornata", md:"G", matchday:"Giornata",
       seeAllR:"Vedi tutti i risultati", seeAllM:"Vedi tutte le partite", collapse:"Riduci", nMatches:"partite",
       played:"giocate", of:"su",
-      stTitle:"Classifica in tempo reale", withLive:"Includi le partite in corso",
+      stTitle:"La classifica",
       cPos:"#", cClub:"Club", cP:"G", cW:"V", cD:"N", cL:"P", cGF:"GF", cGA:"GS", cGD:"+/−", cPts:"Pti", cForm:"Forma", fW:"V", fD:"N", fL:"P",
       zOk:"1-8 · agli ottavi", zPo:"9-24 · spareggi", zOut:"25-36 · eliminate",
       noGames:"Nessuna partita giocata: le 36 squadre sono a pari punti e sono elencate in ordine alfabetico. La classifica prenderà forma dalla 1ª giornata.",
@@ -443,17 +426,14 @@
    * présente en pratique qu'avant le coup d'envoi de la 1re journée, où les
    * 36 clubs sont à zéro — le widget le signale alors explicitement.
    */
-  function classement(data, avecLive) {
+  function classement(data) {
     var R = {};
     Object.keys(data.teams).forEach(function (c) {
       R[c] = { code: c, p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, agf: 0, aw: 0, pts: 0, form: [] };
     });
     data.matchdays.forEach(function (j) {
       j.matches.forEach(function (m) {
-        var fini = m.st === "FT";
-        var live = (m.st === "LIVE" || m.st === "HT");
-        if (!(fini || (avecLive && live))) return;
-        if (m.hg == null || m.ag == null) return;
+        if (m.st !== "FT" || m.hg == null || m.ag == null) return;
         var h = R[m.h], a = R[m.a];
         if (!h || !a) return;
         h.p++; a.p++;
@@ -527,7 +507,6 @@
   var DATA = null, ROWS = [], BR = null, RANK = {};
   var picks = {};
   try { picks = JSON.parse(store.get("c1b26-picks") || "{}") || {}; } catch (e) { picks = {}; }
-  var avecLive = store.get("c1b26-live") !== "0";
   var mdIdx = 0, focus = null;
   // Replié par défaut : c'est tout l'intérêt. L'état survit au rendu toutes
   // les 3 minutes, sinon la liste se refermerait sous les yeux du lecteur.
@@ -547,13 +526,7 @@
   function rendreMeta() {
     META.textContent = "";
     var tous = DATA.matchdays.reduce(function (a, j) { return a.concat(j.matches); }, []);
-    var live = tous.filter(function (m) { return m.st === "LIVE" || m.st === "HT"; }).length;
     var joues = tous.filter(function (m) { return m.st === "FT"; }).length;
-    if (live) {
-      META.appendChild(el("span", "dot"));
-      META.appendChild(el("span", null, T.live + " · " + live));
-      META.appendChild(el("span", null, "·"));
-    }
     META.appendChild(el("span", null, joues + "/" + tous.length + " " + T.played));
     META.appendChild(el("span", null, "·"));
     META.appendChild(el("span", null, T.updated + " " + fmtStamp.format(new Date(DATA.updatedAt))));
@@ -571,7 +544,6 @@
       var b = el("button", null, T.md + j.n);
       b.type = "button";
       b.setAttribute("aria-pressed", i === mdIdx ? "true" : "false");
-      if (j.matches.some(function (m) { return m.st === "LIVE" || m.st === "HT"; })) b.className = "is-live";
       b.addEventListener("click", function () { mdIdx = i; rendre(); });
       nav.appendChild(b);
     });
@@ -585,10 +557,10 @@
     s.appendChild(el("div", "md-sub", T.matchday + " " + j.n + " · " + plage));
 
     // Replié, on garde la première rencontre — elle montre de quoi il s'agit —
-    // plus celles en cours et celle du club sélectionné dans le classement :
-    // masquer le direct pour gagner du défilement serait un mauvais échange.
+    // et celles du club sélectionné dans le classement, pour que le surlignage
+    // croisé continue de fonctionner.
     var visibles = matchsOuverts ? j.matches : j.matches.filter(function (m, i) {
-      return i === 0 || m.st === "LIVE" || m.st === "HT" || focus === m.h || focus === m.a;
+      return i === 0 || focus === m.h || focus === m.a;
     });
 
     var jourCourant = null;
@@ -600,7 +572,7 @@
     });
 
     if (visibles.length < j.matches.length || matchsOuverts) {
-      var joue = j.matches.some(function (m) { return m.st === "FT" || m.st === "LIVE" || m.st === "HT"; });
+      var joue = j.matches.some(function (m) { return m.st === "FT"; });
       var b = el("button", "more");
       b.type = "button";
       b.setAttribute("aria-expanded", matchsOuverts ? "true" : "false");
@@ -618,7 +590,7 @@
 
   function ligneMatch(m) {
     var th = DATA.teams[m.h], ta = DATA.teams[m.a];
-    var fini = m.st === "FT", live = m.st === "LIVE" || m.st === "HT";
+    var fini = m.st === "FT";
     var row = el("div", "m" + (fini ? " done" : "") +
       ((focus === m.h || focus === m.a) ? " hl" : ""));
 
@@ -626,12 +598,10 @@
     h.appendChild(nom(th, fini && m.hg > m.ag ? "win" : ""));
     h.appendChild(crest(th));
 
-    var sc = el("div", "sc" + (live ? " live" : "") + (m.st === "OFF" ? " off" : ""));
-    if ((fini || live) && m.hg != null) {
+    var sc = el("div", "sc" + (m.st === "OFF" ? " off" : ""));
+    if (fini && m.hg != null) {
       sc.appendChild(el("b", null, m.hg + " – " + m.ag));
-      sc.appendChild(el("span", "st", live
-        ? (m.st === "HT" ? T.ht : (m.min != null ? m.min + "'" : T.live))
-        : T.ft));
+      sc.appendChild(el("span", "st", T.ft));
     } else {
       sc.appendChild(el("span", "t", fmtTime.format(new Date(m.iso))));
       if (m.st === "OFF") sc.appendChild(el("span", "st", T.off));
@@ -650,17 +620,6 @@
     var s = el("section", "sec");
     var hd = el("div", "sec-hd");
     hd.appendChild(el("h3", "sec-t", T.stTitle));
-    var tools = el("div", "tools");
-    var sw = el("button", "sw");
-    sw.type = "button";
-    sw.setAttribute("aria-pressed", avecLive ? "true" : "false");
-    sw.appendChild(el("i"));
-    sw.appendChild(el("span", null, T.withLive));
-    sw.addEventListener("click", function () {
-      avecLive = !avecLive; store.set("c1b26-live", avecLive ? "1" : "0"); rendre();
-    });
-    tools.appendChild(sw);
-    hd.appendChild(tools);
     s.appendChild(hd);
 
     var tb = el("table");
@@ -883,7 +842,7 @@
 
   /* ------------------------------------------------------------------ Boucle */
   function rendre() {
-    ROWS = classement(DATA, avecLive);
+    ROWS = classement(DATA);
     RANK = {};
     ROWS.forEach(function (r) { RANK[r.code] = r.pos; });
     BR = construire(ROWS);
@@ -931,8 +890,11 @@
 
   textesFixes();
   charger(true);
-  // Les résultats bougent vite un soir de C1 : on resynchronise toutes les 3 min.
-  setInterval(function () { charger(false); }, 180000);
+  // Le JSON ne change qu'après les coups de sifflet final, deux fois par soir
+  // de C1 : le relire toutes les 15 minutes suffit largement pour un onglet
+  // resté ouvert. C'est un fichier statique servi par GitHub Pages — cette
+  // relecture ne coûte aucun appel à SportMonks.
+  setInterval(function () { charger(false); }, 900000);
 })();
 </script>
 <!-- ================= FIN DU BLOC À COLLER ================= -->

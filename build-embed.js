@@ -133,8 +133,8 @@ domicile, 4 à l’extérieur. Un classement unique départage ensuite les 36 é
 <p>Le tableau interactif ci-dessous réunit trois choses : <strong>les 18 matchs de chaque
 journée</strong> avec leurs scores en direct, <strong>le classement des 36 clubs recalculé en
 temps réel</strong>, et <strong>l’arbre de la phase finale</strong> tel qu’il se dessinerait à
-l’instant t. Les données viennent de SportMonks et se rafraîchissent toutes les
-10 minutes les soirs de match.</p>
+l’instant t. Les données viennent de SportMonks : les résultats sont publiés après
+chaque coup de sifflet final, et le classement se recalcule dans la foulée.</p>
 
 <h3>Le bracket interactif de la Ligue des champions</h3>
 
@@ -142,12 +142,12 @@ l’instant t. Les données viennent de SportMonks et se rafraîchissent toutes 
 /* Réserve la hauteur réelle du widget AVANT son chargement, sinon l'iframe
    grandit d'un coup et pousse tout le texte qui suit — c'est le décalage de
    mise en page que Google mesure (Cumulative Layout Shift).
-   Valeurs relevées sur le widget en ligne : 3200 px à partir de 700 px de
-   large, 3433 px en mobile (le classement et l'arbre y prennent plus de
-   hauteur). Le script ci-dessous remplace ensuite cette réserve par la
-   hauteur exacte. */
-#busa-c1b{min-height:3250px}
-@media (max-width:700px){#busa-c1b{min-height:3480px}}
+   Valeurs relevées sur le widget en ligne, liste des matchs repliée — l'état
+   par défaut : 2462 px à 900 px de large, 2506 px à 700, 2647 px en mobile.
+   Le script ci-dessous remplace ensuite cette réserve par la hauteur exacte. */
+#busa-c1b{min-height:2470px}
+@media (max-width:760px){#busa-c1b{min-height:2520px}}
+@media (max-width:520px){#busa-c1b{min-height:2660px}}
 </style>
 
 <iframe id="busa-c1b"

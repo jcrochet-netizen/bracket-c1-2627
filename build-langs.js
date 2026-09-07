@@ -21,31 +21,31 @@ const MASTER = path.join(__dirname, "bracket-c1.html");
 const META = {
   en: {
     htmlLang: "en", ogLocale: "en_GB",
-    title: "LIVE bracket of the 2026-27 Champions League — fixtures and live table",
-    desc: "All eight league-phase matchdays of the 2026-27 UEFA Champions League, the 36-club table updated live, and the knockout bracket projected as it stands.",
-    ogTitle: "2026-27 Champions League LIVE bracket",
-    ogDesc: "Matchday-by-matchday fixtures, the live 36-club table and a knockout bracket that updates itself."
+    title: "2026-27 Champions League: fixtures, results, table and bracket",
+    desc: "All eight league-phase matchdays of the 2026-27 UEFA Champions League, the results, the 36-club table and the knockout bracket projected as it stands.",
+    ogTitle: "2026-27 Champions League — fixtures, table and bracket",
+    ogDesc: "Matchday-by-matchday fixtures and results, the 36-club table and a knockout bracket that updates itself."
   },
   es: {
     htmlLang: "es", ogLocale: "es_ES",
-    title: "Bracket EN DIRECTO de la Liga de Campeones 2026-2027 — partidos y clasificación",
-    desc: "Las 8 jornadas de la fase de liga de la Liga de Campeones 2026-2027, la clasificación de los 36 clubes en directo y el cuadro de la fase final proyectado al instante.",
-    ogTitle: "Bracket EN DIRECTO Liga de Campeones 2026-2027",
-    ogDesc: "Partidos jornada a jornada, clasificación en directo de los 36 clubes y cuadro de la fase final actualizado automáticamente."
+    title: "Liga de Campeones 2026-2027: partidos, resultados, clasificación y cuadro",
+    desc: "Las 8 jornadas de la fase de liga de la Liga de Campeones 2026-2027, los resultados, la clasificación de los 36 clubes y el cuadro de la fase final.",
+    ogTitle: "Liga de Campeones 2026-2027 — partidos, clasificación y cuadro",
+    ogDesc: "Partidos jornada a jornada, resultados, clasificación de los 36 clubes y cuadro de la fase final actualizado automáticamente."
   },
   pt: {
     htmlLang: "pt-BR", ogLocale: "pt_BR",
-    title: "Bracket AO VIVO da Liga dos Campeões 2026-2027 — jogos e classificação",
-    desc: "As 8 rodadas da fase de liga da Liga dos Campeões 2026-2027, a classificação dos 36 clubes ao vivo e o chaveamento do mata-mata projetado em tempo real.",
-    ogTitle: "Bracket AO VIVO Liga dos Campeões 2026-2027",
-    ogDesc: "Jogos rodada a rodada, classificação ao vivo dos 36 clubes e chaveamento do mata-mata atualizado automaticamente."
+    title: "Liga dos Campeões 2026-2027: jogos, resultados, classificação e chaveamento",
+    desc: "As 8 rodadas da fase de liga da Liga dos Campeões 2026-2027, os resultados, a classificação dos 36 clubes e o chaveamento do mata-mata.",
+    ogTitle: "Liga dos Campeões 2026-2027 — jogos, classificação e chaveamento",
+    ogDesc: "Jogos rodada a rodada, resultados, classificação dos 36 clubes e chaveamento do mata-mata atualizado automaticamente."
   },
   it: {
     htmlLang: "it", ogLocale: "it_IT",
-    title: "Bracket LIVE della Champions League 2026-2027 — partite e classifica in diretta",
-    desc: "Le 8 giornate della fase campionato di Champions League 2026-2027, la classifica delle 36 squadre in tempo reale e il tabellone della fase finale proiettato all'istante.",
-    ogTitle: "Bracket LIVE Champions League 2026-2027",
-    ogDesc: "Partite giornata per giornata, classifica live delle 36 squadre e tabellone della fase finale aggiornato in automatico."
+    title: "Champions League 2026-2027: partite, risultati, classifica e tabellone",
+    desc: "Le 8 giornate della fase campionato di Champions League 2026-2027, i risultati, la classifica delle 36 squadre e il tabellone della fase finale.",
+    ogTitle: "Champions League 2026-2027 — partite, classifica e tabellone",
+    ogDesc: "Partite giornata per giornata, risultati, classifica delle 36 squadre e tabellone della fase finale aggiornato in automatico."
   }
 };
 

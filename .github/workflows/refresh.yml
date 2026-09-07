@@ -1,15 +1,21 @@
-name: Refresh C1 26-27 live bracket
+name: Refresh C1 26-27 results
 
 # Régénère les data-*.json depuis SportMonks et les commit s'ils ont changé.
+#
+# Le widget n'affiche AUCUN score en direct : un match n'a de résultat que
+# lorsqu'il est terminé. Le cron ne passe donc qu'APRÈS les coups de sifflet
+# final, au lieu de sonder l'API toutes les 10 minutes toute la soirée.
+#
+# Repères horaires, valables été comme hiver :
+#   18h45 Paris = 16h45 UTC l'été / 17h45 l'hiver → fin vers 18h40 / 19h40 UTC
+#   21h00 Paris = 19h00 UTC l'été / 20h00 l'hiver → fin vers 20h55 / 21h55 UTC
+# Les deux passages ci-dessous tombent après la fin dans les deux régimes.
 on:
   schedule:
-    # Soirs de Ligue des champions (mardi, mercredi, jeudi) : toutes les 10 min.
-    # Les coups d'envoi sont à 18h45 et 21h00 Paris, soit 16h45/19h00 UTC l'été
-    # et 17h45/20h00 UTC l'hiver — la plage 16h-23h UTC couvre les deux.
-    - cron: "*/10 16-23 * * 2,3,4"
-    # Veille de fond le reste du temps : calendrier, reports, tirages.
-    - cron: "17 */6 * * *"
-  workflow_dispatch: {}
+    - cron: "50 19 * * 2,3,4"   # après les matchs de 18h45
+    - cron: "10 22 * * 2,3,4"   # après les matchs de 21h00
+    - cron: "20 5 * * *"        # filet quotidien : calendrier, reports, tirages
+  workflow_dispatch: {}         # bouton « Run workflow », pour un rattrapage
 
 permissions:
   contents: write

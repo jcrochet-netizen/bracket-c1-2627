@@ -3,9 +3,10 @@
 Widget auto-alimenté par l'API **SportMonks**. Trois blocs empilés, dans cet ordre :
 
 1. **Les matchs, journée par journée** — les 18 rencontres de chacune des 8 journées,
-   avec scores en direct et minute de jeu.
-2. **Le classement en direct** — les 36 clubs, recalculés à chaque rafraîchissement,
-   avec les zones de qualification et une bascule « matchs en cours inclus ».
+   avec leur résultat. Repliées par défaut derrière « Voir tous les résultats » : seule
+   la première reste visible, ce qui suffit à comprendre le bloc sans imposer 18 lignes.
+2. **Le classement** — les 36 clubs, recalculés à chaque rafraîchissement, avec les
+   zones de qualification.
 3. **L'arbre de la phase finale** — barrages, 8es, quarts, demies, finale, auto-remplis
    d'après le classement à l'instant t, puis pronostiquables au clic.
 
@@ -20,13 +21,22 @@ SportMonks API ──> fetch-data.js ──> data-<lang>.json ──> bracket-c1
 ```
 
 - **`fetch-data.js`** (serveur) : lit les 144 matchs de la phase de ligue, en extrait
-  les scores, l'état (à venir / en cours / terminé) et les points disciplinaires, puis
+  les résultats, l'état (à venir / reporté / terminé) et les points disciplinaires, puis
   écrit un `data-<lang>.json` par langue. Il ne classe rien.
 - **`bracket-c1.html`** (client) : calcule le classement, construit l'arbre, gère les
-  pronostics. Rafraîchissement du JSON toutes les 3 minutes.
+  pronostics. Il relit le JSON toutes les 15 minutes — un fichier statique sur GitHub
+  Pages, donc sans aucun appel à SportMonks.
 
-Le classement est calculé **côté client** exprès : c'est ce qui permet la bascule
-« matchs en cours inclus » sans embarquer deux jeux de données.
+## Pas de score en direct, volontairement
+
+Un match n'a de score que lorsqu'il est **terminé**. Le JSON ne contient jamais de
+score partiel, même si l'API en renvoie un pour une rencontre en cours : une rencontre
+en cours est rangée avec les matchs à venir et n'affiche que son heure de coup d'envoi.
+
+C'est un choix de coût. Suivre le direct imposait d'interroger SportMonks toutes les
+10 minutes de 16 h à 23 h les soirs de C1, soit **≈ 690 appels par semaine**. Le cron
+ne passe plus qu'après les coups de sifflet final : **≈ 52 appels par semaine**, treize
+fois moins, pour un résultat publié dans les 15 à 30 minutes suivant la fin des matchs.
 
 ## Le classement : critères UEFA
 
@@ -143,8 +153,8 @@ Ce que fait le bloc, et pourquoi :
 | Choix | Raison |
 | --- | --- |
 | Texte complet autour de l'iframe | Google n'attribue pas le contenu d'une iframe à la page parente. Le texte du bloc **est** le contenu indexé de l'article. |
-| `min-height` calé sur la hauteur réelle (3250 px, 3480 px en mobile) | Sans réserve exacte, l'iframe grandit au chargement et pousse tout le texte suivant : c'est du CLS. Mesuré à **0 px de décalage** sur le widget en ligne. |
-| `loading="lazy"` | L'iframe fait 3200 px : la charger avant qu'elle approche du viewport ralentirait le LCP pour rien. |
+| `min-height` calé sur la hauteur réelle (2470 / 2520 / 2660 px) | Sans réserve exacte, l'iframe grandit au chargement et pousse tout le texte suivant : c'est du CLS. Mesuré à **0 px de décalage**. |
+| `loading="lazy"` | L'iframe fait près de 2500 px : la charger avant qu'elle approche du viewport ralentirait le LCP pour rien. |
 | `title` descriptif | Lu par les lecteurs d'écran, et seul libellé de l'iframe pour les moteurs. |
 | `<link rel="preconnect">` | Ouvre la connexion vers GitHub Pages pendant que le reste de la page se charge. |
 | `<noscript>` avec lien direct | Une iframe vide sans JavaScript n'apporte rien ; le lien, si. |
@@ -168,13 +178,17 @@ puissent coexister sur une même page.
 
 ### Rythme de rafraîchissement
 
-`.github/workflows/refresh.yml` :
+`.github/workflows/refresh.yml` — trois passages, jamais pendant les matchs :
 
-- **toutes les 10 minutes**, de 16 h à 23 h UTC, les mardis, mercredis et jeudis —
-  la plage couvre les coups d'envoi de 18 h 45 et 21 h 00 (heure de Paris) sur les
-  deux régimes horaires ;
-- **toutes les 6 heures** le reste du temps, pour le calendrier, les reports et les
-  tirages.
+| Cron (UTC) | Quand | Pourquoi |
+| --- | --- | --- |
+| `50 19 * * 2,3,4` | 19 h 50 | après les matchs de 18 h 45 (fin vers 18 h 40 UTC l'été, 19 h 40 l'hiver) |
+| `10 22 * * 2,3,4` | 22 h 10 | après les matchs de 21 h 00 (fin vers 20 h 55 UTC l'été, 21 h 55 l'hiver) |
+| `20 5 * * *` | 5 h 20 | filet quotidien : calendrier, reports, tirages |
+
+Soit 13 exécutions par semaine, 4 appels API chacune. Les deux horaires de soirée
+tombent après la fin des rencontres **dans les deux régimes horaires**, été comme
+hiver — c'est ce qui permet de n'y passer qu'une fois.
 
 Le commit n'est écrit que si les données ont réellement changé : `data-changed.js`
 compare les fichiers **sans** leur champ `updatedAt`, sinon le cron produirait un
