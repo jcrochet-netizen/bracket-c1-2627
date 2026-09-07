@@ -135,6 +135,21 @@
 .c1b .sc.live{background:rgba(217,45,32,.10);}
 .c1b .sc.live .st{color:var(--live);}
 .c1b .sc.off .t{text-decoration:line-through;}
+.c1b .more{
+  display:flex; align-items:center; justify-content:center; gap:.45rem;
+  width:100%; margin-top:.6rem; padding:.46rem .7rem;
+  font-size:.76rem; font-weight:600; color:var(--acc);
+  background:var(--sf); border:1px solid var(--ln); border-radius:9px;
+  transition:background .15s,border-color .15s;
+}
+.c1b .more:hover{background:var(--sf2); border-color:var(--acc);}
+.c1b .more .n{font-weight:500; color:var(--ink3);}
+.c1b .more::after{
+  content:""; width:.4rem; height:.4rem; flex:none;
+  border-right:1.7px solid currentColor; border-bottom:1.7px solid currentColor;
+  transform:translateY(-25%) rotate(45deg);
+}
+.c1b .more[aria-expanded="true"]::after{transform:translateY(25%) rotate(-135deg);}
 
 /* ----------------------------------------------------------- Classement */
 .c1b .tools{display:flex; align-items:center; gap:.5rem; flex-wrap:wrap;}
@@ -293,6 +308,7 @@
       loading:"Chargement des données…", error:"Données indisponibles pour le moment.",
       updated:"Mis à jour", live:"En direct", ht:"MT", ft:"Fin", off:"Reporté",
       mdTitle:"Les matchs, journée par journée", md:"J", matchday:"Journée",
+      seeAllR:"Voir tous les résultats", seeAllM:"Voir tous les matchs", collapse:"Réduire", nMatches:"matchs",
       played:"joués", of:"sur",
       stTitle:"Classement en direct", withLive:"Matchs en cours inclus",
       cPos:"#", cClub:"Club", cP:"J", cW:"G", cD:"N", cL:"P", cGF:"BP", cGA:"BC", cGD:"+/−", cPts:"Pts", cForm:"Forme", fW:"V", fD:"N", fL:"D",
@@ -310,6 +326,7 @@
       loading:"Loading data…", error:"Data unavailable right now.",
       updated:"Updated", live:"Live", ht:"HT", ft:"FT", off:"Postponed",
       mdTitle:"Fixtures, matchday by matchday", md:"MD", matchday:"Matchday",
+      seeAllR:"See all results", seeAllM:"See all fixtures", collapse:"Collapse", nMatches:"matches",
       played:"played", of:"of",
       stTitle:"Live league table", withLive:"Include matches in progress",
       cPos:"#", cClub:"Club", cP:"P", cW:"W", cD:"D", cL:"L", cGF:"GF", cGA:"GA", cGD:"+/−", cPts:"Pts", cForm:"Form", fW:"W", fD:"D", fL:"L",
@@ -327,6 +344,7 @@
       loading:"Cargando datos…", error:"Datos no disponibles por ahora.",
       updated:"Actualizado", live:"En directo", ht:"DES", ft:"Final", off:"Aplazado",
       mdTitle:"Los partidos, jornada a jornada", md:"J", matchday:"Jornada",
+      seeAllR:"Ver todos los resultados", seeAllM:"Ver todos los partidos", collapse:"Reducir", nMatches:"partidos",
       played:"jugados", of:"de",
       stTitle:"Clasificación en directo", withLive:"Incluir partidos en juego",
       cPos:"#", cClub:"Club", cP:"PJ", cW:"G", cD:"E", cL:"P", cGF:"GF", cGA:"GC", cGD:"+/−", cPts:"Pts", cForm:"Forma", fW:"G", fD:"E", fL:"P",
@@ -344,6 +362,7 @@
       loading:"Carregando dados…", error:"Dados indisponíveis no momento.",
       updated:"Atualizado", live:"Ao vivo", ht:"INT", ft:"Fim", off:"Adiado",
       mdTitle:"Os jogos, rodada a rodada", md:"R", matchday:"Rodada",
+      seeAllR:"Ver todos os resultados", seeAllM:"Ver todos os jogos", collapse:"Recolher", nMatches:"jogos",
       played:"jogados", of:"de",
       stTitle:"Classificação ao vivo", withLive:"Incluir jogos em andamento",
       cPos:"#", cClub:"Clube", cP:"J", cW:"V", cD:"E", cL:"D", cGF:"GP", cGA:"GC", cGD:"+/−", cPts:"Pts", cForm:"Forma", fW:"V", fD:"E", fL:"D",
@@ -361,6 +380,7 @@
       loading:"Caricamento dati…", error:"Dati non disponibili al momento.",
       updated:"Aggiornato", live:"Live", ht:"INT", ft:"Fine", off:"Rinviata",
       mdTitle:"Le partite, giornata per giornata", md:"G", matchday:"Giornata",
+      seeAllR:"Vedi tutti i risultati", seeAllM:"Vedi tutte le partite", collapse:"Riduci", nMatches:"partite",
       played:"giocate", of:"su",
       stTitle:"Classifica in tempo reale", withLive:"Includi le partite in corso",
       cPos:"#", cClub:"Club", cP:"G", cW:"V", cD:"N", cL:"P", cGF:"GF", cGA:"GS", cGD:"+/−", cPts:"Pti", cForm:"Forma", fW:"V", fD:"N", fL:"P",
@@ -509,6 +529,9 @@
   try { picks = JSON.parse(store.get("c1b26-picks") || "{}") || {}; } catch (e) { picks = {}; }
   var avecLive = store.get("c1b26-live") !== "0";
   var mdIdx = 0, focus = null;
+  // Replié par défaut : c'est tout l'intérêt. L'état survit au rendu toutes
+  // les 3 minutes, sinon la liste se refermerait sous les yeux du lecteur.
+  var matchsOuverts = store.get("c1b26-open") === "1";
 
   /* -------------------------------------------------------------- Rendu */
   var BODY = document.getElementById("c1b-body");
@@ -561,13 +584,35 @@
     if (fmtDay.format(d1) !== fmtDay.format(d2)) plage += " — " + fmtDay.format(d2);
     s.appendChild(el("div", "md-sub", T.matchday + " " + j.n + " · " + plage));
 
+    // Replié, on garde la première rencontre — elle montre de quoi il s'agit —
+    // plus celles en cours et celle du club sélectionné dans le classement :
+    // masquer le direct pour gagner du défilement serait un mauvais échange.
+    var visibles = matchsOuverts ? j.matches : j.matches.filter(function (m, i) {
+      return i === 0 || m.st === "LIVE" || m.st === "HT" || focus === m.h || focus === m.a;
+    });
+
     var jourCourant = null;
-    j.matches.forEach(function (m) {
+    visibles.forEach(function (m) {
       var d = new Date(m.iso);
       var jour = fmtDay.format(d);
       if (jour !== jourCourant) { jourCourant = jour; s.appendChild(el("div", "day", cap(jour))); }
       s.appendChild(ligneMatch(m));
     });
+
+    if (visibles.length < j.matches.length || matchsOuverts) {
+      var joue = j.matches.some(function (m) { return m.st === "FT" || m.st === "LIVE" || m.st === "HT"; });
+      var b = el("button", "more");
+      b.type = "button";
+      b.setAttribute("aria-expanded", matchsOuverts ? "true" : "false");
+      b.appendChild(el("span", null, matchsOuverts ? T.collapse : (joue ? T.seeAllR : T.seeAllM)));
+      if (!matchsOuverts) b.appendChild(el("span", "n", j.matches.length + " " + T.nMatches));
+      b.addEventListener("click", function () {
+        matchsOuverts = !matchsOuverts;
+        store.set("c1b26-open", matchsOuverts ? "1" : "0");
+        rendre();
+      });
+      s.appendChild(b);
+    }
     return s;
   }
 
