@@ -69,16 +69,42 @@ Format UEFA depuis 2024-25 :
 | 9<sup>e</sup>-24<sup>e</sup> | barrages aller-retour |
 | 25<sup>e</sup>-36<sup>e</sup> | éliminés |
 
-Les barrages opposent les paires 9/10-23/24, 11/12-21/22, 13/14-19/20 et 15/16-17/18 ;
-en 8es, le vainqueur de chaque branche retrouve la paire de têtes de série
-correspondante (1/2 contre la branche 15/16-17/18, etc.).
+L'arbre affiché **est celui de l'annexe B du règlement UCL**, transposé de haut en
+bas : quatre positions du côté argenté, quatre du côté bleu, les deux ne pouvant se
+croiser qu'en finale. La table `ANNEXE_B` de `bracket-c1.html` le décrit position par
+position :
 
-**Tant que le tirage n'a pas eu lieu**, l'appariement exact à l'intérieur de chaque
-paire est indéterminé. Le widget retient une convention lisible et équilibrée — la
-mieux classée de la paire affronte la moins bien classée du couple adverse — et
-l'annonce comme une projection. Dès que l'UEFA tire les barrages (29 janvier 2027) et
-que SportMonks publie les stages correspondants, `fetch-data.js` les détecte tout seul
-et les vraies rencontres remplissent le champ `knockout` du JSON.
+| Ordre | Côté | Barrage (art. 19.02) | Tête de série (art. 19.03) |
+| --- | --- | --- | --- |
+| 1 | argenté | 21/22 v 11/12 | 5/6 |
+| 2 | argenté | 19/20 v 13/14 | 3/4 |
+| 3 | argenté | 23/24 v 9/10 | 7/8 |
+| 4 | argenté | 17/18 v 15/16 | 1/2 |
+| 5 | bleu | 22/21 v 12/11 | 6/5 |
+| 6 | bleu | 20/19 v 14/13 | 4/3 |
+| 7 | bleu | 24/23 v 10/9 | 8/7 |
+| 8 | bleu | 18/17 v 16/15 | 2/1 |
+
+D'où : quarts {5/6 v 3/4} et {7/8 v 1/2} de chaque côté, demie argentée entre les
+rangs 1, 4, 5, 8 et demie bleue entre les rangs 2, 3, 6, 7. Dans chaque affiche, le
+club du bas **reçoit au match retour** — tête de série en barrage et en 8es
+(art. 19.02 §3 et 19.03 §3), rangs 1 à 4 en quart et rangs 1 et 2 en demie
+(art. 19.04) ; en finale, l'équipe du côté argenté est l'équipe recevante
+(art. 19.05).
+
+`verify-annexe-b.js` relit cette table **dans le HTML servi** et contrôle les
+douze points du règlement :
+
+```bash
+node verify-annexe-b.js
+```
+
+**Tant que le tirage n'a pas eu lieu**, une position notée « 21 » vaut en réalité
+« 21 ou 22 » : le tirage décide lequel des deux clubs de la paire part de ce côté de
+l'arbre. Le widget retient une convention équilibrée — chaque moitié reçoit un club de
+chaque paire — et l'annonce comme une projection. Dès que l'UEFA tire les barrages
+(29 janvier 2027) et que SportMonks publie les stages correspondants, `fetch-data.js`
+les détecte tout seul et les vraies rencontres remplissent le champ `knockout` du JSON.
 
 Le bouton **« Remplir d'après le classement »** fait avancer partout la mieux classée :
 un bracket complet en un clic, que le lecteur peut ensuite modifier.
@@ -242,6 +268,7 @@ commit toutes les 10 minutes pour rien.
 | `data*.json` | Matchs + points disciplinaires, par langue |
 | `index.html` | Sélecteur de langue |
 | `build-embed.js` | Génère le bloc WordPress + son balisage schema.org |
+| `verify-annexe-b.js` | Contrôle la conformité de l'arbre à l'annexe B du règlement UCL |
 | `embed-wordpress.html` | Bloc FR complet à coller dans WordPress, texte indexable + balisage (généré) |
 | `embed-iframes.html` | L'iframe seule, dans les 5 langues (généré) |
 | `serve.js` | Serveur statique local |

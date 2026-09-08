@@ -143,11 +143,11 @@ chaque coup de sifflet final, et le classement se recalcule dans la foulée.</p>
    grandit d'un coup et pousse tout le texte qui suit — c'est le décalage de
    mise en page que Google mesure (Cumulative Layout Shift).
    Valeurs relevées sur le widget en ligne, liste des matchs repliée — l'état
-   par défaut : 2462 px à 900 px de large, 2506 px à 700, 2694 px en mobile.
+   par défaut : 2485 px à 900 px de large, 2529 px à 700, 2731 px en mobile.
    Le script ci-dessous remplace ensuite cette réserve par la hauteur exacte. */
-#busa-c1b-fr{min-height:2470px}
-@media (max-width:760px){#busa-c1b-fr{min-height:2520px}}
-@media (max-width:520px){#busa-c1b-fr{min-height:2700px}}
+#busa-c1b-fr{min-height:2490px}
+@media (max-width:760px){#busa-c1b-fr{min-height:2540px}}
+@media (max-width:520px){#busa-c1b-fr{min-height:2780px}}
 </style>
 
 <iframe id="busa-c1b-fr"
@@ -293,9 +293,9 @@ const bloc = (L) => {
 <link rel="preconnect" href="https://jcrochet-netizen.github.io">
 
 <style>
-#${id}{min-height:2470px}
-@media (max-width:760px){#${id}{min-height:2520px}}
-@media (max-width:520px){#${id}{min-height:2700px}}
+#${id}{min-height:2490px}
+@media (max-width:760px){#${id}{min-height:2540px}}
+@media (max-width:520px){#${id}{min-height:2780px}}
 </style>
 
 <iframe id="${id}"

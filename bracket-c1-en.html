@@ -216,6 +216,29 @@
 .c1b .tie .row.drop{opacity:.4;}
 .c1b .tie .row.ghost{color:var(--ink3); font-style:italic;}
 .c1b .tie .row.hl{outline:2px solid var(--acc); outline-offset:-2px;}
+/* Le club qui reçoit au match retour : liseré à gauche, comme le trait de
+   la légende du schéma UEFA. */
+.c1b .tie .row.retour{box-shadow:inset 3px 0 0 var(--ink3);}
+.c1b .tie .row.retour.pick{box-shadow:inset 2px 0 0 var(--acc);}
+/* L'étiquette du côté est posée AU-DESSUS de la boîte sans occuper de place :
+   sinon elle décale la demi-finale hors du milieu de ses deux quarts, et les
+   traits de l'arbre ne pointent plus au bon endroit. */
+.c1b .half{width:100%; position:relative;}
+.c1b .half-t{
+  position:absolute; bottom:100%; left:0; right:0;
+  display:flex; align-items:center; gap:.3rem; justify-content:center;
+  font-size:.56rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--ink3); padding-bottom:.3rem;
+}
+.c1b .half-t i{width:.45rem; height:.45rem; border-radius:50%; display:inline-block;}
+.c1b .br-leg{
+  display:flex; gap:1rem; flex-wrap:wrap; align-items:center;
+  font-size:.66rem; color:var(--ink3); margin-top:.5rem;
+}
+.c1b .br-leg span{display:inline-flex; align-items:center; gap:.35rem;}
+.c1b .br-leg u{
+  width:2px; height:.8rem; background:var(--ink3); display:inline-block; text-decoration:none;
+}
 .c1b .tie.final .row{padding:.4rem .45rem;}
 .c1b .tie.champ{border-color:var(--acc); background:var(--acc-soft);}
 .c1b .cup{display:flex; align-items:center; justify-content:center; gap:.4rem; padding:.35rem 0 0;
@@ -301,6 +324,7 @@
       brNote:"Projection à l'instant t d'après le classement. Cliquez sur une équipe pour la faire avancer.",
       brDrawn:"Tirage effectué : rencontres réelles.",
       rPo:"Barrages", rR16:"8es de finale", rQf:"Quarts", rSf:"Demies", rF:"Finale",
+      silver:"Côté argenté", blue:"Côté bleu", secondLeg:"reçoit au match retour", finalHome:"L’équipe du côté argenté est l’équipe recevante en finale.",
       champion:"Vainqueur", tbd:"Vainqueur B", auto:"Remplir d'après le classement", clear:"Effacer",
       outTitle:"Éliminés (25e-36e)", scroll:"Faites défiler pour voir tout l'arbre",
       footer:"Données SportMonks, actualisées automatiquement. Classement calculé selon les critères UEFA : points, différence de buts, buts marqués, buts marqués à l'extérieur, victoires, victoires à l'extérieur, points disciplinaires." },
@@ -319,6 +343,7 @@
       brNote:"Projected from the table as it stands. Click a team to move it through.",
       brDrawn:"Draw made: real ties shown.",
       rPo:"Play-offs", rR16:"Round of 16", rQf:"Quarter-finals", rSf:"Semi-finals", rF:"Final",
+      silver:"Silver side", blue:"Blue side", secondLeg:"plays the second leg at home", finalHome:"The silver-side team is the home team in the final.",
       champion:"Winner", tbd:"Winner PO", auto:"Fill from the table", clear:"Clear",
       outTitle:"Eliminated (25th-36th)", scroll:"Scroll to see the whole bracket",
       footer:"SportMonks data, refreshed automatically. Table sorted by the UEFA criteria: points, goal difference, goals scored, away goals, wins, away wins, disciplinary points." },
@@ -337,6 +362,7 @@
       brNote:"Proyección según la clasificación actual. Haz clic en un equipo para hacerlo avanzar.",
       brDrawn:"Sorteo realizado: eliminatorias reales.",
       rPo:"Play-offs", rR16:"Octavos", rQf:"Cuartos", rSf:"Semifinales", rF:"Final",
+      silver:"Lado plateado", blue:"Lado azul", secondLeg:"juega la vuelta en casa", finalHome:"El equipo del lado plateado es el local en la final.",
       champion:"Campeón", tbd:"Ganador PO", auto:"Rellenar según la clasificación", clear:"Borrar",
       outTitle:"Eliminados (25.º-36.º)", scroll:"Desliza para ver todo el cuadro",
       footer:"Datos de SportMonks, actualizados automáticamente. Clasificación según los criterios UEFA: puntos, diferencia de goles, goles a favor, goles fuera de casa, victorias, victorias fuera, puntos disciplinarios." },
@@ -355,6 +381,7 @@
       brNote:"Projeção a partir da classificação atual. Clique num time para avançá-lo.",
       brDrawn:"Sorteio realizado: confrontos reais.",
       rPo:"Play-offs", rR16:"Oitavas", rQf:"Quartas", rSf:"Semifinais", rF:"Final",
+      silver:"Lado prateado", blue:"Lado azul", secondLeg:"joga a volta em casa", finalHome:"A equipa do lado prateado é a visitada na final.",
       champion:"Campeão", tbd:"Vencedor PO", auto:"Preencher pela classificação", clear:"Limpar",
       outTitle:"Eliminados (25º-36º)", scroll:"Arraste para ver o chaveamento inteiro",
       footer:"Dados SportMonks, atualizados automaticamente. Classificação pelos critérios da UEFA: pontos, saldo de gols, gols marcados, gols fora, vitórias, vitórias fora, pontos disciplinares." },
@@ -373,6 +400,7 @@
       brNote:"Proiezione sulla classifica attuale. Clicca una squadra per farla avanzare.",
       brDrawn:"Sorteggio effettuato: sfide reali.",
       rPo:"Spareggi", rR16:"Ottavi", rQf:"Quarti", rSf:"Semifinali", rF:"Finale",
+      silver:"Lato argento", blue:"Lato blu", secondLeg:"gioca il ritorno in casa", finalHome:"La squadra del lato argento è quella di casa in finale.",
       champion:"Vincitrice", tbd:"Vincente SP", auto:"Compila dalla classifica", clear:"Cancella",
       outTitle:"Eliminate (25ª-36ª)", scroll:"Scorri per vedere tutto il tabellone",
       footer:"Dati SportMonks, aggiornati automaticamente. Classifica secondo i criteri UEFA: punti, differenza reti, reti fatte, reti in trasferta, vittorie, vittorie in trasferta, punti disciplinari." }
@@ -463,26 +491,47 @@
 
   /* ---------------------------------------------------------------- Bracket
    * Format UEFA depuis 2024-25 : 1-8 directement en 8es, 9-24 aux barrages,
-   * 25-36 éliminés. Les barrages opposent 9/10-23/24, 11/12-21/22,
-   * 13/14-19/20 et 15/16-17/18 ; en 8es, le vainqueur de chaque branche
-   * retrouve la paire de têtes de série correspondante.
+   * 25-36 éliminés.
    *
-   * Tant que le tirage n'a pas eu lieu, l'appariement exact à l'intérieur de
-   * chaque paire est indéterminé : on retient une convention lisible et
-   * équilibrée (la mieux classée de la paire affronte la moins bien classée
-   * du couple adverse), signalée comme une projection.
+   * L'arbre ci-dessous EST celui de l'annexe B du règlement UCL, lu de haut en
+   * bas : quatre positions du côté argenté, quatre du côté bleu. Les deux ne
+   * peuvent se rencontrer qu'en finale, où l'équipe du côté argenté est
+   * l'équipe recevante à des fins administratives (art. 19.05).
+   *
+   *   po    : la paire de barrage qui alimente la position (art. 19.02) —
+   *           non-tête de série d'abord, tête de série ensuite
+   *   seed  : la tête de série qui attend en 8es (art. 19.03)
+   *
+   * Une position notée « 21 » vaut en réalité « 21 ou 22 » : le tirage décide
+   * lequel des deux clubs de la paire part de ce côté de l'arbre. Tant qu'il
+   * n'a pas eu lieu, on retient une convention équilibrée — chaque moitié
+   * reçoit un club de chaque paire — signalée comme une projection.
+   *
+   * Dans chaque affiche, le club du bas reçoit au match retour : tête de série
+   * en barrage et en 8es (art. 19.02 §3 et 19.03 §3), rangs 1 à 4 en quart et
+   * rangs 1 et 2 en demie (art. 19.04).
    */
-  var PO_PAIRS = [[16, 17], [9, 24], [13, 20], [12, 21], [15, 18], [10, 23], [14, 19], [11, 22]];
-  var R16_SEEDS = [1, 8, 4, 5, 2, 7, 3, 6];
+  var ANNEXE_B = [
+    { cote: "argent", po: [21, 12], seed: 5 },
+    { cote: "argent", po: [20, 13], seed: 4 },
+    { cote: "argent", po: [24,  9], seed: 8 },
+    { cote: "argent", po: [17, 16], seed: 1 },
+    { cote: "bleu",   po: [22, 11], seed: 6 },
+    { cote: "bleu",   po: [19, 14], seed: 3 },
+    { cote: "bleu",   po: [23, 10], seed: 7 },
+    { cote: "bleu",   po: [18, 15], seed: 2 }
+  ];
 
   function construire(rows) {
     var byPos = {};
     rows.forEach(function (r) { byPos[r.pos] = r.code; });
-    var po = PO_PAIRS.map(function (p, i) {
-      return { id: "po" + i, a: byPos[p[0]] || null, b: byPos[p[1]] || null, sa: p[0], sb: p[1] };
+    var po = ANNEXE_B.map(function (e, i) {
+      return { id: "po" + i, a: byPos[e.po[0]] || null, b: byPos[e.po[1]] || null, sa: e.po[0], sb: e.po[1] };
     });
-    var r16 = R16_SEEDS.map(function (s, i) {
-      return { id: "r16" + i, a: byPos[s] || null, b: null, sa: s, sb: null, from: "po" + i };
+    // En 8es, le vainqueur du barrage est en haut, la tête de série en bas :
+    // c'est elle qui reçoit au retour.
+    var r16 = ANNEXE_B.map(function (e, i) {
+      return { id: "r16" + i, a: null, b: byPos[e.seed] || null, sa: null, sb: e.seed, from: "po" + i };
     });
     var qf = [0, 1, 2, 3].map(function (i) { return { id: "qf" + i, a: null, b: null, from: ["r16" + (2 * i), "r16" + (2 * i + 1)] }; });
     var sf = [0, 1].map(function (i) { return { id: "sf" + i, a: null, b: null, from: ["qf" + (2 * i), "qf" + (2 * i + 1)] }; });
@@ -510,7 +559,7 @@
       if (b && !a) return t.b;
       return null;   // aucune des deux, ou les deux : rencontre non tranchée
     }
-    br.r16.forEach(function (t, i) { t.b = gagnant(br.po[i], "po"); });
+    br.r16.forEach(function (t, i) { t.a = gagnant(br.po[i], "po"); });
     br.qf.forEach(function (t, i) { t.a = gagnant(br.r16[2 * i], "r16"); t.b = gagnant(br.r16[2 * i + 1], "r16"); });
     br.sf.forEach(function (t, i) { t.a = gagnant(br.qf[2 * i], "qf"); t.b = gagnant(br.qf[2 * i + 1], "qf"); });
     br.f[0].a = gagnant(br.sf[0], "sf"); br.f[0].b = gagnant(br.sf[1], "sf");
@@ -752,7 +801,21 @@
         if (ci > 0) cls += " in";
         var cell = el("div", cls);
         cell.style.gridRow = "span " + c.span;
-        cell.appendChild(boiteTie(t, c.key));
+        if (c.key === "sf") {
+          // Une demi-finale = une moitié de tableau : c'est là que le côté
+          // argenté et le côté bleu se nomment le plus naturellement.
+          var moitie = el("div", "half");
+          var lab = el("div", "half-t");
+          var pastille = el("i");
+          pastille.style.background = i === 0 ? "var(--out)" : "var(--acc)";
+          lab.appendChild(pastille);
+          lab.appendChild(document.createTextNode(i === 0 ? T.silver : T.blue));
+          moitie.appendChild(lab);
+          moitie.appendChild(boiteTie(t, c.key));
+          cell.appendChild(moitie);
+        } else {
+          cell.appendChild(boiteTie(t, c.key));
+        }
         col.appendChild(cell);
       });
       br.appendChild(col);
@@ -767,6 +830,14 @@
       cup.appendChild(document.createTextNode("🏆 " + T.champion + " : " + DATA.teams[champ].name));
       s.appendChild(cup);
     }
+
+    var leg = el("div", "br-leg");
+    var l1 = el("span");
+    l1.appendChild(el("u"));
+    l1.appendChild(document.createTextNode(T.secondLeg));
+    leg.appendChild(l1);
+    leg.appendChild(el("span", null, T.finalHome));
+    s.appendChild(leg);
 
     // Éliminés
     var elim = ROWS.filter(function (r) { return r.pos >= 25; });
@@ -802,13 +873,16 @@
     // jusqu'en finale, alors que la tête de série n'existe qu'aux deux
     // premiers tours.
     var seed = code ? RANK[code] : (side === "a" ? t.sa : t.sb);
-    var b = el("button", "row");
+    // Le bas de l'affiche reçoit au retour ; en finale, c'est le côté argenté,
+    // donc le haut.
+    var retour = round === "f" ? side === "a" : side === "b";
+    var b = el("button", "row" + (retour ? " retour" : ""));
     b.type = "button";
     if (!code) {
       b.className += " ghost";
       b.disabled = true;
       b.appendChild(el("span", "seed", seed ? String(seed) : "–"));
-      b.appendChild(el("span", "nm", round === "r16" && side === "b"
+      b.appendChild(el("span", "nm", round === "r16" && side === "a"
         ? T.tbd + (Number(t.id.replace("r16", "")) + 1) : "—"));
       return b;
     }
