@@ -997,7 +997,18 @@
     try { window.parent.postMessage({ type: "busa-c1b-height", height: h }, "*"); } catch (e) {}
   }
   window.addEventListener("resize", hauteur);
-  if (window.ResizeObserver) new ResizeObserver(hauteur).observe(document.documentElement);
+  // On observe la racine du widget, pas `documentElement` : l'élément racine a
+  // la taille du viewport de l'iframe, que la page parente fixe elle-même, donc
+  // il ne bouge pas quand le contenu se réagence.
+  if (window.ResizeObserver) new ResizeObserver(hauteur).observe(ROOT);
+  // Et par-dessus, une vérification périodique. Ni `resize` ni ResizeObserver
+  // ne se sont révélés fiables à l'essai lorsque la page parente redimensionne
+  // l'iframe : le contenu passait de 2512 à 2748 px sans qu'aucun message ne
+  // parte, et le widget se retrouvait tronqué sur toute page dont la largeur se
+  // stabilise après coup — publicités, colonne latérale, rotation d'un
+  // téléphone. Cette seconde par seconde ne coûte qu'une lecture de hauteur, et
+  // `hauteur()` ne poste rien tant que rien n'a bougé.
+  setInterval(hauteur, 1000);
 
   function charger(premier) {
     fetch(SRC + "?t=" + Math.floor(Date.now() / 60000), { cache: "no-store" })

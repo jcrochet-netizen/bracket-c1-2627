@@ -186,8 +186,25 @@ langues. Chaque bloc de langue est autonome — réserve de hauteur, iframe et s
 d'ajustement — et porte un identifiant propre (`busa-c1b-fr`, `-en`…), donc deux
 langues peuvent cohabiter sur une même page.
 
-Le message de hauteur, lui, s'appelle `busa-c1b-height` pour les cinq : c'est le
-widget qui l'émet, et il ignore l'identifiant que la page donne à son iframe. Chaque
+### ⚠ Aucune ligne indentée, jamais
+
+Le HTML produit ne contient **aucune indentation**, et aucune balise ne s'étale sur
+plusieurs lignes. Ce n'est pas une coquetterie.
+
+Constaté sur Sports Mole : leur CMS remplace **l'espace de début de ligne par
+`&nbsp;`**. L'iframe, dont les attributs étaient répartis sur sept lignes indentées, a
+perdu son `src`, son `style` et son `title` — il n'en restait qu'une boîte vide de
+300 × 2470 px au milieu de l'article, et les mots du `title` étaient devenus des
+attributs (`champions`, `league`, `bracket:`…). Le script de hauteur, indenté de deux
+espaces, échouait sur `SyntaxError: Unexpected token '&'` : dans un `<script>`, les
+entités ne sont pas décodées. Le `<style>`, collé à gauche, était lui passé intact —
+c'est la seule différence entre ce qui a survécu et ce qui a été détruit.
+
+`build-embed.js` **refuse d'écrire** un fichier contenant la moindre ligne indentée.
+Le JSON-LD garde ses retours à la ligne mais pas son indentation, pour la même raison.
+
+Le message de hauteur, lui, s'appelle `busa-c1b-height` pour les cinq langues : c'est
+le widget qui l'émet, et il ignore l'identifiant que la page donne à son iframe. Chaque
 script vérifie donc `e.source === frame.contentWindow` avant d'appliquer la valeur.
 Sans cette vérification, deux widgets sur une même page se renvoient leurs hauteurs
 respectives — constaté à l'essai avant correction.

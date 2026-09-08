@@ -14,6 +14,16 @@
  * ⚠ Le contenu de l'iframe n'appartient PAS à la page parente : Google ne
  * l'attribue pas à l'article. Tout ce qui doit être indexé — et tout ce qui est
  * balisé — vit donc dans le HTML du bloc, pas dans le widget.
+ *
+ * ⚠⚠ AUCUNE LIGNE DU HTML PRODUIT NE DOIT ÊTRE INDENTÉE, et une balise ne doit
+ * jamais s'étaler sur plusieurs lignes. Constaté sur Sports Mole : le CMS
+ * remplace l'espace de début de ligne par `&nbsp;`. Une iframe dont les
+ * attributs étaient indentés sur sept lignes a perdu son `src`, son `style` et
+ * son `title` — il n'en restait qu'une boîte vide de 300 × 2470 px — et le
+ * script de hauteur, indenté de deux espaces, échouait sur
+ * « SyntaxError: Unexpected token '&' ».
+ * Le `<style>`, lui, collé à gauche, était passé intact : c'est la seule
+ * différence entre ce qui a survécu et ce qui a été détruit.
  */
 
 const fs = require("fs");
@@ -40,9 +50,9 @@ function isoLocal(iso) {
   const d = new Date(iso);
   const p = Object.fromEntries(
     new Intl.DateTimeFormat("en-CA", {
-      timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit",
-      hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23",
-      timeZoneName: "longOffset"
+ timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit",
+ hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23",
+ timeZoneName: "longOffset"
     }).formatToParts(d).map((x) => [x.type, x.value])
   );
   const offset = (p.timeZoneName || "GMT+00:00").replace("GMT", "") || "+00:00";
@@ -68,7 +78,7 @@ for (const [jour, ms] of parJour) {
   for (const m of ms) {
     const v = data.venues[m.v];
     const lieu = v ? ` — ${esc(v.n)}${v.c ? `, ${esc(v.c)}` : ""}` : "";
-    listeHtml += `  <li><strong>${esc(data.teams[m.h].name)} – ${esc(data.teams[m.a].name)}</strong>, ${heureFr(m.iso)}${lieu}.</li>\n`;
+    listeHtml += `<li><strong>${esc(data.teams[m.h].name)} – ${esc(data.teams[m.a].name)}</strong>, ${heureFr(m.iso)}${lieu}.</li>\n`;
   }
   listeHtml += `</ul>\n`;
 }
@@ -93,33 +103,37 @@ const evenements = journee.matches.map((m) => {
     eventStatus: m.st === "OFF" ? "https://schema.org/EventPostponed" : "https://schema.org/EventScheduled",
     eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
     location: v
-      ? { "@type": "Place", name: v.n, address: adresse }
-      : { "@type": "Place", name: "Stade à confirmer", address: { "@type": "PostalAddress", addressCountry: "EU" } },
+ ? { "@type": "Place", name: v.n, address: adresse }
+ : { "@type": "Place", name: "Stade à confirmer", address: { "@type": "PostalAddress", addressCountry: "EU" } },
     homeTeam: { "@type": "SportsTeam", name: dom.name, logo: dom.logo },
     awayTeam: { "@type": "SportsTeam", name: ext.name, logo: ext.logo },
     organizer: { "@type": "SportsOrganization", name: "UEFA", url: "https://www.uefa.com/" }
   };
 });
 
-const jsonLd = JSON.stringify({ "@context": "https://schema.org", "@graph": evenements }, null, 2);
+// Retours à la ligne conservés pour la lisibilité, indentation retirée : dans un
+// <script>, les entités ne sont pas décodées, donc un `&nbsp;` inséré par le CMS
+// en début de ligne rendrait le JSON invalide.
+const jsonLd = JSON.stringify({ "@context": "https://schema.org", "@graph": evenements }, null, 2)
+  .replace(/^ +/gm, "");
 
 /* ---------------------------------------------------------------- Le bloc */
 
 const html = `<!-- =========================================================================
-     Bracket LIVE Ligue des champions 2026-2027 — bloc à coller dans un bloc
-     WordPress « HTML personnalisé ».
+Bracket LIVE Ligue des champions 2026-2027 — bloc à coller dans un bloc
+WordPress « HTML personnalisé ».
 
-     Généré par : node build-embed.js${arg ? ` --j=${arg}` : ""}
-     Journée affichée : ${journee.n}
+Généré par : node build-embed.js${arg ? ` --j=${arg}` : ""}
+Journée affichée : ${journee.n}
 
-     ⚠ NE PAS coller l'iframe seule. Le contenu d'une iframe n'est pas attribué
-       à la page parente par Google : le texte ci-dessous EST le contenu indexé
-       de l'article. Le widget, lui, apporte le direct et l'interactivité.
+⚠ NE PAS coller l'iframe seule. Le contenu d'une iframe n'est pas attribué à la
+page parente par Google : le texte ci-dessous EST le contenu indexé de l'article.
+Le widget, lui, apporte le direct et l'interactivité.
 
-     ⚠ Le balisage schema.org en bas décrit exactement les rencontres listées
-       plus haut. Si vous supprimez la liste, supprimez le JSON-LD ; si vous
-       changez de journée, régénérez les deux avec build-embed.js.
-     ========================================================================= -->
+⚠ Le balisage schema.org en bas décrit exactement les rencontres listées plus
+haut. Si vous supprimez la liste, supprimez le JSON-LD ; si vous changez de
+journée, régénérez les deux avec build-embed.js.
+========================================================================= -->
 
 <link rel="preconnect" href="https://jcrochet-netizen.github.io">
 
@@ -139,58 +153,43 @@ chaque coup de sifflet final, et le classement se recalcule dans la foulée.</p>
 <h3>Le bracket interactif de la Ligue des champions</h3>
 
 <style>
-/* Réserve la hauteur réelle du widget AVANT son chargement, sinon l'iframe
-   grandit d'un coup et pousse tout le texte qui suit — c'est le décalage de
-   mise en page que Google mesure (Cumulative Layout Shift).
-   Valeurs relevées DANS UNE PAGE PARENTE RÉELLE, cache vidé, liste des matchs
-   repliée — l'état par défaut : 2513 px dans un article de 900 px, 2560 à 700,
-   2749 en mobile. Mesurer le widget seul ne suffit pas : dans un article, il
-   est plus étroit que le viewport et donc plus haut.
-   Le script ci-dessous remplace ensuite cette réserve par la hauteur exacte. */
+/* Réserve la hauteur réelle du widget AVANT son chargement, sinon l'iframe grandit
+d'un coup et pousse tout le texte qui suit : c'est le décalage de mise en page que
+Google mesure (Cumulative Layout Shift). Valeurs relevées DANS UNE PAGE PARENTE
+RÉELLE, cache vidé, liste des matchs repliée — 2513 px dans un article de 900 px,
+2560 à 700, 2749 en mobile. Mesurer le widget seul ne suffit pas : dans un article
+il est plus étroit que le viewport, donc plus haut. Le script ci-dessous remplace
+ensuite cette réserve par la hauteur exacte. */
 #busa-c1b-fr{min-height:2515px}
 @media (max-width:760px){#busa-c1b-fr{min-height:2565px}}
 @media (max-width:520px){#busa-c1b-fr{min-height:2755px}}
 </style>
 
-<iframe id="busa-c1b-fr"
-        src="${PAGES}/bracket-c1.html"
-        title="Bracket LIVE de la Ligue des champions 2026-2027 : les matchs de chaque journée, le classement en direct des 36 clubs et l’arbre de la phase finale"
-        loading="lazy"
-        scrolling="no"
-        referrerpolicy="strict-origin-when-cross-origin"
-        style="display:block;margin:0 auto;width:100%;max-width:900px;
-               border:0;overflow:hidden"></iframe>
+<iframe id="busa-c1b-fr" src="${PAGES}/bracket-c1.html" title="Bracket de la Ligue des champions 2026-2027 - matchs, classement et phase finale" loading="lazy" scrolling="no" referrerpolicy="strict-origin-when-cross-origin" style="display:block;margin:0 auto;width:100%;max-width:900px;border:0;overflow:hidden"></iframe>
 
-<noscript>
-  <p><a href="${PAGES}/bracket-c1.html" rel="noopener">Ouvrir le bracket de la Ligue
-  des champions 2026-2027 en plein écran</a> — le tableau interactif a besoin de
-  JavaScript pour afficher les scores en direct.</p>
-</noscript>
+<noscript><p><a href="${PAGES}/bracket-c1.html" rel="noopener">Ouvrir le bracket de la Ligue des champions 2026-2027 en plein écran</a> — le tableau interactif a besoin de JavaScript.</p></noscript>
 
 <script>
-/* Ajuste la hauteur de l'iframe à son contenu, pour qu'aucune barre de
-   défilement interne n'apparaisse. Amélioration progressive : si WordPress
-   filtre ce script, l'iframe reste parfaitement lisible grâce au min-height
-   ci-dessus, qui est déjà à la bonne hauteur. */
-(function () {
-  var ORIGIN = 'https://jcrochet-netizen.github.io';
-  var frame  = document.getElementById('busa-c1b-fr');
-  window.addEventListener('message', function (e) {
-    if (e.origin !== ORIGIN) return;
-    var d = e.data;
-    // Le type du message est le même pour les cinq langues — c'est le widget
-    // qui l'émet, il ne connaît pas l'identifiant que la page lui donne.
-    if (!d || d.type !== 'busa-c1b-height') return;
-    if (!frame) frame = document.getElementById('busa-c1b-fr');
-    if (!frame) return;
-    // D'où la vérification de l'émetteur : sans elle, deux widgets sur une
-    // même page se renverraient leurs hauteurs respectives.
-    if (e.source !== frame.contentWindow) return;
-    var h = parseInt(d.height, 10);
-    if (!h || h < 1) return;
-    frame.style.height = h + 'px';
-    frame.style.minHeight = '0';
-  }, false);
+// Ajuste la hauteur de l'iframe a son contenu, pour qu'aucune barre de defilement
+// interne n'apparaisse. Si le CMS filtre ce script, l'iframe reste parfaitement
+// lisible grace au min-height ci-dessus, qui est deja a la bonne hauteur.
+// NE JAMAIS REINDENTER : certains CMS remplacent l'espace de debut de ligne par
+// &nbsp;, ce qui produit une erreur de syntaxe et casse tout.
+(function(){
+var ORIGIN='https://jcrochet-netizen.github.io';
+var frame=document.getElementById('busa-c1b-fr');
+window.addEventListener('message',function(e){
+if(e.origin!==ORIGIN)return;
+var d=e.data;
+if(!d||d.type!=='busa-c1b-height')return;
+if(!frame)frame=document.getElementById('busa-c1b-fr');
+if(!frame)return;
+if(e.source!==frame.contentWindow)return;
+var h=parseInt(d.height,10);
+if(!h||h<1)return;
+frame.style.height=h+'px';
+frame.style.minHeight='0';
+},false);
 })();
 </script>
 
@@ -204,9 +203,9 @@ ${listeHtml}
 <p>Le classement unique des 36 clubs décide de tout, à l’issue des 8 journées :</p>
 
 <ul>
-  <li><strong>Du 1<sup>er</sup> au 8<sup>e</sup></strong> : qualifiés directement pour les huitièmes de finale.</li>
-  <li><strong>Du 9<sup>e</sup> au 24<sup>e</sup></strong> : barrages en aller-retour, les moins bien classés recevant au match aller.</li>
-  <li><strong>Du 25<sup>e</sup> au 36<sup>e</sup></strong> : éliminés, sans repêchage en Ligue Europa.</li>
+<li><strong>Du 1<sup>er</sup> au 8<sup>e</sup></strong> : qualifiés directement pour les huitièmes de finale.</li>
+<li><strong>Du 9<sup>e</sup> au 24<sup>e</sup></strong> : barrages en aller-retour, les moins bien classés recevant au match aller.</li>
+<li><strong>Du 25<sup>e</sup> au 36<sup>e</sup></strong> : éliminés, sans repêchage en Ligue Europa.</li>
 </ul>
 
 <h3>Comment les égalités sont-elles départagées ?</h3>
@@ -222,11 +221,11 @@ puis points disciplinaires. Il n’y a <strong>pas</strong> de confrontation dir
 Le calendrier complet de la phase finale :</p>
 
 <ul>
-  <li><strong>Barrages</strong> — tirage le 29 janvier 2027, matchs les 16-17 et 23-24 février 2027.</li>
-  <li><strong>Huitièmes de finale</strong> — tirage le 26 février 2027, matchs les 9-10 et 16-17 mars 2027.</li>
-  <li><strong>Quarts de finale</strong> — 6-7 et 13-14 avril 2027.</li>
-  <li><strong>Demi-finales</strong> — 27-28 avril et 4-5 mai 2027.</li>
-  <li><strong>Finale</strong> — samedi 5 juin 2027, Estadio Metropolitano, Madrid.</li>
+<li><strong>Barrages</strong> — tirage le 29 janvier 2027, matchs les 16-17 et 23-24 février 2027.</li>
+<li><strong>Huitièmes de finale</strong> — tirage le 26 février 2027, matchs les 9-10 et 16-17 mars 2027.</li>
+<li><strong>Quarts de finale</strong> — 6-7 et 13-14 avril 2027.</li>
+<li><strong>Demi-finales</strong> — 27-28 avril et 4-5 mai 2027.</li>
+<li><strong>Finale</strong> — samedi 5 juin 2027, Estadio Metropolitano, Madrid.</li>
 </ul>
 
 <h3>Les 36 clubs de la phase de ligue 2026-2027</h3>
@@ -242,13 +241,13 @@ Sporting Portugal, Stuttgart, Viking Stavanger, Villarreal.</p>
 <strong>LOSC</strong> et le <strong>RC Lens</strong>.</p>
 
 <!-- =========================================================================
-     Données structurées : une fiche SportsEvent par rencontre de la journée
-     ${journee.n}, celles listées plus haut dans la page. Rien d'autre n'est balisé.
+Données structurées : une fiche SportsEvent par rencontre de la journée
+${journee.n}, celles listées plus haut dans la page. Rien d'autre n'est balisé.
 
-     Volontairement ABSENTS de ce bloc, parce que Yoast / Rank Math les
-     produisent déjà pour toute la page et qu'un doublon est une erreur :
-     Article, WebPage, Organization, BreadcrumbList.
-     ========================================================================= -->
+Volontairement ABSENTS de ce bloc, parce que Yoast / Rank Math les
+produisent déjà pour toute la page et qu'un doublon est une erreur :
+Article, WebPage, Organization, BreadcrumbList.
+========================================================================= -->
 
 <script type="application/ld+json">
 ${jsonLd}
@@ -268,90 +267,95 @@ console.log(`✓ embed-wordpress.html — journée ${journee.n}, ${journee.match
  */
 const LANGUES = [
   { code:"fr", fichier:"bracket-c1.html",    langAttr:"fr",
-    titre:"Bracket de la Ligue des champions 2026-2027 : les matchs de chaque journée, le classement et l’arbre de la phase finale",
+    titre:"Bracket de la Ligue des champions 2026-2027 - matchs, classement et phase finale",
     lien:"Ouvrir le bracket de la Ligue des champions 2026-2027 en plein écran",
     js:"le tableau interactif a besoin de JavaScript." },
   { code:"en", fichier:"bracket-c1-en.html", langAttr:"en",
-    titre:"2026-27 Champions League bracket: every matchday’s fixtures, the 36-club table and the knockout bracket",
+    titre:"2026-27 Champions League bracket - fixtures, table and knockout stage",
     lien:"Open the 2026-27 Champions League bracket full screen",
     js:"the interactive table needs JavaScript." },
   { code:"es", fichier:"bracket-c1-es.html", langAttr:"es",
-    titre:"Cuadro de la Liga de Campeones 2026-2027: los partidos de cada jornada, la clasificación y la fase final",
+    titre:"Cuadro de la Liga de Campeones 2026-2027 - partidos, clasificación y fase final",
     lien:"Abrir el cuadro de la Liga de Campeones 2026-2027 a pantalla completa",
     js:"la tabla interactiva necesita JavaScript." },
   { code:"pt", fichier:"bracket-c1-pt.html", langAttr:"pt-BR",
-    titre:"Chaveamento da Liga dos Campeões 2026-2027: os jogos de cada rodada, a classificação e o mata-mata",
+    titre:"Chaveamento da Liga dos Campeões 2026-2027 - jogos, classificação e mata-mata",
     lien:"Abrir o chaveamento da Liga dos Campeões 2026-2027 em tela cheia",
     js:"a tabela interativa precisa de JavaScript." },
   { code:"it", fichier:"bracket-c1-it.html", langAttr:"it",
-    titre:"Tabellone della Champions League 2026-2027: le partite di ogni giornata, la classifica e la fase finale",
+    titre:"Tabellone della Champions League 2026-2027 - partite, classifica e fase finale",
     lien:"Aprire il tabellone della Champions League 2026-2027 a schermo intero",
     js:"la tabella interattiva ha bisogno di JavaScript." }
 ];
 
 const bloc = (L) => {
   const id = `busa-c1b-${L.code}`;
+  // AUCUNE INDENTATION dans ce qui suit — voir l'avertissement en tête du fichier.
   return `<!-- ${L.code.toUpperCase()} — ${PAGES}/${L.fichier} -->
 <link rel="preconnect" href="https://jcrochet-netizen.github.io">
-
 <style>
 #${id}{min-height:2515px}
 @media (max-width:760px){#${id}{min-height:2565px}}
 @media (max-width:520px){#${id}{min-height:2755px}}
 </style>
-
-<iframe id="${id}"
-        src="${PAGES}/${L.fichier}"
-        title="${L.titre}"
-        loading="lazy"
-        scrolling="no"
-        referrerpolicy="strict-origin-when-cross-origin"
-        style="display:block;margin:0 auto;width:100%;max-width:900px;
-               border:0;overflow:hidden"></iframe>
-
-<noscript>
-  <p lang="${L.langAttr}"><a href="${PAGES}/${L.fichier}" rel="noopener">${L.lien}</a> — ${L.js}</p>
-</noscript>
-
+<iframe id="${id}" src="${PAGES}/${L.fichier}" title="${L.titre}" loading="lazy" scrolling="no" referrerpolicy="strict-origin-when-cross-origin" style="display:block;margin:0 auto;width:100%;max-width:900px;border:0;overflow:hidden"></iframe>
+<noscript><p lang="${L.langAttr}"><a href="${PAGES}/${L.fichier}" rel="noopener">${L.lien}</a> — ${L.js}</p></noscript>
 <script>
-(function () {
-  var ORIGIN = 'https://jcrochet-netizen.github.io';
-  var frame  = document.getElementById('${id}');
-  window.addEventListener('message', function (e) {
-    if (e.origin !== ORIGIN) return;
-    var d = e.data;
-    // Type identique pour les cinq langues : c'est le widget qui l'émet, il
-    // ignore l'identifiant que la page donne à son iframe.
-    if (!d || d.type !== 'busa-c1b-height') return;
-    if (!frame) frame = document.getElementById('${id}');
-    if (!frame) return;
-    // D'où la vérification de l'émetteur : sans elle, deux langues posées sur
-    // une même page se renverraient leurs hauteurs respectives.
-    if (e.source !== frame.contentWindow) return;
-    var h = parseInt(d.height, 10);
-    if (!h || h < 1) return;
-    frame.style.height = h + 'px';
-    frame.style.minHeight = '0';
-  }, false);
+// Ajuste la hauteur de l'iframe a son contenu.
+// NE JAMAIS REINDENTER CE SCRIPT : certains CMS remplacent l'espace de debut de
+// ligne par &nbsp;, ce qui produit une erreur de syntaxe et casse tout.
+(function(){
+var ORIGIN='https://jcrochet-netizen.github.io';
+var frame=document.getElementById('${id}');
+window.addEventListener('message',function(e){
+if(e.origin!==ORIGIN)return;
+var d=e.data;
+// Type identique pour les cinq langues, d'ou la verification de l'emetteur.
+if(!d||d.type!=='busa-c1b-height')return;
+if(!frame)frame=document.getElementById('${id}');
+if(!frame)return;
+if(e.source!==frame.contentWindow)return;
+var h=parseInt(d.height,10);
+if(!h||h<1)return;
+frame.style.height=h+'px';
+frame.style.minHeight='0';
+},false);
 })();
 </script>`;
 };
 
 const iframes = `<!-- =========================================================================
-     Bracket Ligue des champions 2026-2027 — l'iframe seule, dans les 5 langues.
-     Généré par : node build-embed.js
+Bracket Ligue des champions 2026-2027 — l'iframe seule, dans les 5 langues.
+Généré par : node build-embed.js
 
-     Chaque bloc est AUTONOME : réserve de hauteur, iframe et script d'ajustement
-     voyagent ensemble, avec un identifiant propre à la langue. Deux langues
-     peuvent donc cohabiter sur une même page.
+Chaque bloc est AUTONOME : réserve de hauteur, iframe et script d'ajustement
+voyagent ensemble, avec un identifiant propre à la langue. Deux langues
+peuvent donc cohabiter sur une même page.
 
-     ⚠ L'iframe seule ne rapporte aucun SEO : Google n'attribue pas le contenu
-       d'une iframe à la page parente. Pour un article destiné à ranker, coller
-       embed-wordpress.html, qui entoure l'iframe du texte indexable.
-     ========================================================================= -->
+⚠ L'iframe seule ne rapporte aucun SEO : Google n'attribue pas le contenu d'une
+iframe à la page parente. Pour un article destiné à ranker, coller
+embed-wordpress.html, qui entoure l'iframe du texte indexable.
+========================================================================= -->
 
 ${LANGUES.map((L) => bloc(L)).join("\n\n\n")}
 `;
 
 fs.writeFileSync(path.join(__dirname, "embed-iframes.html"), iframes);
 console.log(`✓ embed-iframes.html — ${LANGUES.length} langues`);
+
+/* Garde-fou. Une seule ligne indentée suffit à casser le bloc sur un CMS qui
+   convertit l'espace de début de ligne en `&nbsp;` — c'est arrivé sur Sports
+   Mole, où l'iframe a perdu son `src`. Le générateur refuse donc d'écrire un
+   fichier qui contiendrait la moindre indentation. */
+let fautes = 0;
+for (const f of ["embed-wordpress.html", "embed-iframes.html"]) {
+  const lignes = fs.readFileSync(path.join(__dirname, f), "utf8").split("\n");
+  lignes.forEach((l, i) => {
+    if (/^[ \t]+\S/.test(l)) { console.error(`✗ ${f}:${i + 1} ligne indentée — ${l.slice(0, 60)}`); fautes++; }
+  });
+}
+if (fautes) {
+  console.error(`\n✗ ${fautes} ligne(s) indentée(s) : le bloc serait cassé par un CMS qui convertit les espaces de début de ligne.`);
+  process.exit(1);
+}
+console.log("✓ aucune ligne indentée — le bloc survit aux CMS qui réécrivent les espaces");
