@@ -106,6 +106,28 @@ chaque paire — et l'annonce comme une projection. Dès que l'UEFA tire les bar
 (29 janvier 2027) et que SportMonks publie les stages correspondants, `fetch-data.js`
 les détecte tout seul et les vraies rencontres remplissent le champ `knockout` du JSON.
 
+### Simuler le tirage
+
+Toute la liberté que laisse l'annexe B tient en **douze pile ou face** : pour chacune
+des douze paires ({1,2}, {3,4} … {23,24}), lequel des deux clubs part du côté argenté ?
+Soit **4096 tirages possibles**, et ces douze bits les décrivent tous — ils couvrent
+aussi bien la répartition entre les deux moitiés que l'appariement des barrages
+(11 contre 21 ou contre 22, selon le tirage des deux paires).
+
+Le bouton **« 🎲 Simuler le tirage »** en tire un au hasard. Il est le seul bouton
+plein du widget : c'est l'invitation à jouer. Chaque clic redonne un tirage, gardé
+dans le `localStorage`.
+
+Cela rend visible ce qui était arbitraire : sans tirage simulé, le widget applique une
+convention fixe, identique pour tous les lecteurs, et le bracket affiché n'est qu'un
+des 4096 possibles. Contrôlé sur **20 000 tirages simulés** : tous conformes à
+l'annexe B — appariements légaux, aucune position en double, une tête de série de
+chaque paire par moitié, 1 et 2 toujours dans des moitiés opposées. 4059 tirages
+distincts rencontrés sur 4096.
+
+Les pronostics survivent au tirage : celui-ci déplace les clubs d'une moitié à l'autre,
+jamais d'un tour à l'autre, donc aucun pronostic ne devient impossible.
+
 Le bouton **« Remplir d'après le classement »** fait avancer partout la mieux classée :
 un bracket complet en un clic, que le lecteur peut ensuite modifier.
 

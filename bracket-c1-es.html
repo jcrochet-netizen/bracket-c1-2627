@@ -22,6 +22,7 @@
   --ink:#14171c; --ink2:#5a626e; --ink3:#8d95a1;
   --acc:#0b2f7a;            /* bleu UEFA */
   --acc-soft:rgba(11,47,122,.09);
+  --acc-on:#ffffff;         /* texte posé SUR l'accent */
   --ok:#1a7f43; --ok-soft:rgba(26,127,67,.10);
   --po:#b26a00; --po-soft:rgba(178,106,0,.10);
   --out:#98a0ac;
@@ -39,7 +40,7 @@
   :root:not([data-theme="light"]) .c1b:not([data-c1b-theme="light"]){
     --g:#0f1216; --sf:#171b21; --sf2:#1d222a; --ln:#262c35;
     --ink:#e9ecf0; --ink2:#9aa2ae; --ink3:#6d7683;
-    --acc:#7ea6ff; --acc-soft:rgba(126,166,255,.13);
+    --acc:#7ea6ff; --acc-soft:rgba(126,166,255,.13); --acc-on:#0f1216;
     --ok:#4ec97f; --ok-soft:rgba(78,201,127,.13);
     --po:#f0a94a; --po-soft:rgba(240,169,74,.13);
     --out:#5f6771; --live:#ff6b60; --brl:#3b4450;
@@ -49,7 +50,7 @@
 :root[data-theme="dark"] .c1b:not([data-c1b-theme="light"]){
   --g:#0f1216; --sf:#171b21; --sf2:#1d222a; --ln:#262c35;
   --ink:#e9ecf0; --ink2:#9aa2ae; --ink3:#6d7683;
-  --acc:#7ea6ff; --acc-soft:rgba(126,166,255,.13);
+  --acc:#7ea6ff; --acc-soft:rgba(126,166,255,.13); --acc-on:#0f1216;
   --ok:#4ec97f; --ok-soft:rgba(78,201,127,.13);
   --po:#f0a94a; --po-soft:rgba(240,169,74,.13);
   --out:#5f6771; --live:#ff6b60; --brl:#3b4450;
@@ -257,6 +258,20 @@
 }
 .c1b .btn:hover{background:var(--sf2); color:var(--ink);}
 .c1b .btn.pri{color:var(--acc); border-color:var(--acc); background:var(--acc-soft);}
+/* Le bouton du tirage est l'invitation à jouer : c'est le seul plein de la
+   page, pour qu'on le voie avant de lire la note. */
+.c1b .btn.draw{
+  color:var(--acc-on); background:var(--acc); border-color:var(--acc);
+  font-weight:700; padding:.34rem .9rem; box-shadow:0 1px 3px rgba(0,0,0,.13);
+}
+.c1b .btn.draw:hover{color:var(--acc-on); filter:brightness(1.12);}
+.c1b .btn.draw:active{transform:translateY(1px);}
+.c1b .btn.draw .d{font-size:.9rem; line-height:1; margin-right:.35rem;}
+.c1b .drawn{
+  display:inline-flex; align-items:center; gap:.35rem; margin-top:.3rem;
+  font-size:.7rem; font-weight:600; color:var(--acc);
+  background:var(--acc-soft); border-radius:20px; padding:.16rem .6rem;
+}
 .c1b .hint{display:flex; align-items:center; justify-content:center; gap:.35rem;
   font-size:.66rem; color:var(--ink3); padding:.3rem 0 .45rem;}
 @container c1b (min-width:880px){ .c1b .hint{display:none;} }
@@ -327,6 +342,7 @@
       rPo:"Barrages", rR16:"8es de finale", rQf:"Quarts", rSf:"Demies", rF:"Finale",
       silver:"Côté argenté", blue:"Côté bleu", secondLeg:"reçoit au match retour", finalHome:"L’équipe du côté argenté est l’équipe recevante en finale.",
       champion:"Vainqueur", tbd:"Vainqueur B", auto:"Remplir d'après le classement", clear:"Effacer",
+      draw:"Simuler le tirage", drawn:"Tirage simulé — relancez pour un autre", drawReal:"Le vrai tirage des barrages a lieu le 29 janvier 2027.",
       outTitle:"Éliminés (25e-36e)", scroll:"Faites défiler pour voir tout l'arbre",
       footer:"Données SportMonks, actualisées automatiquement. Classement calculé selon les critères UEFA : points, différence de buts, buts marqués, buts marqués à l'extérieur, victoires, victoires à l'extérieur, points disciplinaires." },
     en:{ locale:"en-GB", tz:"Europe/London",
@@ -346,6 +362,7 @@
       rPo:"Play-offs", rR16:"Round of 16", rQf:"Quarter-finals", rSf:"Semi-finals", rF:"Final",
       silver:"Silver side", blue:"Blue side", secondLeg:"plays the second leg at home", finalHome:"The silver-side team is the home team in the final.",
       champion:"Winner", tbd:"Winner PO", auto:"Fill from the table", clear:"Clear",
+      draw:"Simulate the draw", drawn:"Draw simulated — hit it again for another", drawReal:"The real play-off draw takes place on 29 January 2027.",
       outTitle:"Eliminated (25th-36th)", scroll:"Scroll to see the whole bracket",
       footer:"SportMonks data, refreshed automatically. Table sorted by the UEFA criteria: points, goal difference, goals scored, away goals, wins, away wins, disciplinary points." },
     es:{ locale:"es-ES", tz:"Europe/Madrid",
@@ -365,6 +382,7 @@
       rPo:"Play-offs", rR16:"Octavos", rQf:"Cuartos", rSf:"Semifinales", rF:"Final",
       silver:"Lado plateado", blue:"Lado azul", secondLeg:"juega la vuelta en casa", finalHome:"El equipo del lado plateado es el local en la final.",
       champion:"Campeón", tbd:"Ganador PO", auto:"Rellenar según la clasificación", clear:"Borrar",
+      draw:"Simular el sorteo", drawn:"Sorteo simulado — vuelve a pulsar para otro", drawReal:"El sorteo real de los play-offs es el 29 de enero de 2027.",
       outTitle:"Eliminados (25.º-36.º)", scroll:"Desliza para ver todo el cuadro",
       footer:"Datos de SportMonks, actualizados automáticamente. Clasificación según los criterios UEFA: puntos, diferencia de goles, goles a favor, goles fuera de casa, victorias, victorias fuera, puntos disciplinarios." },
     pt:{ locale:"pt-BR", tz:"America/Sao_Paulo",
@@ -384,6 +402,7 @@
       rPo:"Play-offs", rR16:"Oitavas", rQf:"Quartas", rSf:"Semifinais", rF:"Final",
       silver:"Lado prateado", blue:"Lado azul", secondLeg:"joga a volta em casa", finalHome:"A equipa do lado prateado é a visitada na final.",
       champion:"Campeão", tbd:"Vencedor PO", auto:"Preencher pela classificação", clear:"Limpar",
+      draw:"Simular o sorteio", drawn:"Sorteio simulado — clique de novo para outro", drawReal:"O sorteio real dos play-offs é a 29 de janeiro de 2027.",
       outTitle:"Eliminados (25º-36º)", scroll:"Arraste para ver o chaveamento inteiro",
       footer:"Dados SportMonks, atualizados automaticamente. Classificação pelos critérios da UEFA: pontos, saldo de gols, gols marcados, gols fora, vitórias, vitórias fora, pontos disciplinares." },
     it:{ locale:"it-IT", tz:"Europe/Rome",
@@ -403,6 +422,7 @@
       rPo:"Spareggi", rR16:"Ottavi", rQf:"Quarti", rSf:"Semifinali", rF:"Finale",
       silver:"Lato argento", blue:"Lato blu", secondLeg:"gioca il ritorno in casa", finalHome:"La squadra del lato argento è quella di casa in finale.",
       champion:"Vincitrice", tbd:"Vincente SP", auto:"Compila dalla classifica", clear:"Cancella",
+      draw:"Simula il sorteggio", drawn:"Sorteggio simulato — rilancia per un altro", drawReal:"Il sorteggio vero degli spareggi è il 29 gennaio 2027.",
       outTitle:"Eliminate (25ª-36ª)", scroll:"Scorri per vedere tutto il tabellone",
       footer:"Dati SportMonks, aggiornati automaticamente. Classifica secondo i criteri UEFA: punti, differenza reti, reti fatte, reti in trasferta, vittorie, vittorie in trasferta, punti disciplinari." }
   };
@@ -534,16 +554,49 @@
     return n % 2 ? n + "/" + (n + 1) : (n - 1) + "/" + n;
   }
 
+  /**
+   * Le tirage simulé. Toute la liberté que laisse l'annexe B tient en douze
+   * pile ou face : pour chacune des douze paires ({1,2}, {3,4} … {23,24}),
+   * lequel des deux clubs part du côté argenté ? Soit 4096 tirages possibles,
+   * et ces douze bits suffisent à les décrire tous — ils couvrent aussi bien
+   * la répartition entre les deux moitiés que l'appariement des barrages
+   * (11 contre 21 ou contre 22, selon les tirages des deux paires).
+   *
+   * `tirage` vaut null tant que le lecteur n'a rien simulé : on affiche alors
+   * la convention par défaut, identique pour tout le monde.
+   */
+  var tirage = null;
+  try {
+    var brut = store.get("c1b26-tirage");
+    if (brut) tirage = JSON.parse(brut);
+  } catch (e) { tirage = null; }
+
+  /** Quelle position occupe réellement la case `slot` de l'annexe B ? */
+  function resoudre(slot) {
+    if (!tirage || !slot) return slot;
+    var bas = slot % 2 ? slot : slot - 1;   // membre impair de la paire
+    if (!tirage[bas]) return slot;
+    return slot === bas ? bas + 1 : bas;
+  }
+
+  function simulerTirage() {
+    tirage = {};
+    for (var bas = 1; bas <= 23; bas += 2) tirage[bas] = Math.random() < 0.5;
+    store.set("c1b26-tirage", JSON.stringify(tirage));
+    rendre();
+  }
+
   function construire(rows) {
     var byPos = {};
     rows.forEach(function (r) { byPos[r.pos] = r.code; });
     var po = ANNEXE_B.map(function (e, i) {
-      return { id: "po" + i, a: byPos[e.po[0]] || null, b: byPos[e.po[1]] || null, sa: e.po[0], sb: e.po[1] };
+      return { id: "po" + i, a: byPos[resoudre(e.po[0])] || null, b: byPos[resoudre(e.po[1])] || null,
+               sa: e.po[0], sb: e.po[1] };
     });
     // En 8es, le vainqueur du barrage est en haut, la tête de série en bas :
     // c'est elle qui reçoit au retour.
     var r16 = ANNEXE_B.map(function (e, i) {
-      return { id: "r16" + i, a: null, b: byPos[e.seed] || null, sa: null, sb: e.seed, from: "po" + i };
+      return { id: "r16" + i, a: null, b: byPos[resoudre(e.seed)] || null, sa: null, sb: e.seed, from: "po" + i };
     });
     var qf = [0, 1, 2, 3].map(function (i) { return { id: "qf" + i, a: null, b: null, from: ["r16" + (2 * i), "r16" + (2 * i + 1)] }; });
     var sf = [0, 1].map(function (i) { return { id: "sf" + i, a: null, b: null, from: ["qf" + (2 * i), "qf" + (2 * i + 1)] }; });
@@ -770,6 +823,12 @@
     var hd = el("div", "sec-hd");
     hd.appendChild(el("h3", "sec-t", T.brTitle));
     var tools = el("div", "tools");
+    var bDraw = el("button", "btn draw");
+    bDraw.type = "button";
+    bDraw.appendChild(el("span", "d", "🎲"));
+    bDraw.appendChild(el("span", null, T.draw));
+    bDraw.addEventListener("click", function () { simulerTirage(); });
+    tools.appendChild(bDraw);
     var bAuto = el("button", "btn pri", T.auto);
     bAuto.type = "button";
     bAuto.addEventListener("click", function () { remplirAuto(); });
@@ -783,6 +842,13 @@
     hd.appendChild(tools);
     s.appendChild(hd);
     s.appendChild(el("p", "sec-note", DATA.koDrawn ? T.brDrawn : T.brNote));
+    if (!DATA.koDrawn && tirage) {
+      var badge = el("div", "drawn");
+      badge.appendChild(el("span", null, "🎲"));
+      badge.appendChild(el("span", null, T.drawn));
+      s.appendChild(badge);
+      s.appendChild(el("p", "sec-note", T.drawReal));
+    }
 
     var hint = el("div", "hint");
     hint.appendChild(document.createTextNode("↔ " + T.scroll));
