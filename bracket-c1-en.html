@@ -969,6 +969,7 @@
     BODY.appendChild(sectionJournees());
     BODY.appendChild(sectionClassement());
     BODY.appendChild(sectionBracket());
+    pret = true;
     hauteur();
   }
 
@@ -980,10 +981,16 @@
     return d.matchdays.length - 1;
   }
 
-  /* Hauteur de l'iframe → page parente (même convention que les autres widgets). */
-  var derniere = 0;
+  /* Hauteur de l'iframe → page parente (même convention que les autres widgets).
+   *
+   * On se tait tant que les données ne sont pas rendues. Sinon le premier
+   * message part au bout de 13 ms avec la hauteur du « Chargement… », soit
+   * 240 px : la page parente l'applique, efface sa réserve d'espace, puis
+   * encaisse un saut de plus de 2000 px quand le vrai contenu arrive. C'est
+   * exactement le décalage de mise en page que la réserve devait empêcher. */
+  var derniere = 0, pret = false;
   function hauteur() {
-    if (window.parent === window) return;
+    if (!pret || window.parent === window) return;
     var h = Math.ceil(document.documentElement.getBoundingClientRect().height);
     if (Math.abs(h - derniere) < 2) return;
     derniere = h;
@@ -1001,7 +1008,14 @@
         rendre();
       })
       .catch(function () {
-        if (!DATA) { BODY.textContent = ""; BODY.appendChild(el("div", "load", T.error)); }
+        if (!DATA) {
+          BODY.textContent = "";
+          BODY.appendChild(el("div", "load", T.error));
+          // Données injoignables : là, il faut au contraire annoncer la petite
+          // hauteur, pour que la page parente ne garde pas 2500 px de vide.
+          pret = true;
+          hauteur();
+        }
       });
   }
 
