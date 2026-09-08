@@ -35,12 +35,14 @@ chaque coup de sifflet final, et le classement se recalcule dans la foulée.</p>
 /* Réserve la hauteur réelle du widget AVANT son chargement, sinon l'iframe
    grandit d'un coup et pousse tout le texte qui suit — c'est le décalage de
    mise en page que Google mesure (Cumulative Layout Shift).
-   Valeurs relevées sur le widget en ligne, liste des matchs repliée — l'état
-   par défaut : 2485 px à 900 px de large, 2529 px à 700, 2731 px en mobile.
+   Valeurs relevées DANS UNE PAGE PARENTE RÉELLE, cache vidé, liste des matchs
+   repliée — l'état par défaut : 2513 px dans un article de 900 px, 2560 à 700,
+   2749 en mobile. Mesurer le widget seul ne suffit pas : dans un article, il
+   est plus étroit que le viewport et donc plus haut.
    Le script ci-dessous remplace ensuite cette réserve par la hauteur exacte. */
-#busa-c1b-fr{min-height:2490px}
-@media (max-width:760px){#busa-c1b-fr{min-height:2540px}}
-@media (max-width:520px){#busa-c1b-fr{min-height:2780px}}
+#busa-c1b-fr{min-height:2515px}
+@media (max-width:760px){#busa-c1b-fr{min-height:2565px}}
+@media (max-width:520px){#busa-c1b-fr{min-height:2755px}}
 </style>
 
 <iframe id="busa-c1b-fr"
