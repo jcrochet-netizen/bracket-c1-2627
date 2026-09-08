@@ -35,13 +35,13 @@ chaque coup de sifflet final, et le classement se recalcule dans la foulée.</p>
 /* Réserve la hauteur réelle du widget AVANT son chargement, sinon l'iframe grandit
 d'un coup et pousse tout le texte qui suit : c'est le décalage de mise en page que
 Google mesure (Cumulative Layout Shift). Valeurs relevées DANS UNE PAGE PARENTE
-RÉELLE, cache vidé, liste des matchs repliée — 2513 px dans un article de 900 px,
-2560 à 700, 2749 en mobile. Mesurer le widget seul ne suffit pas : dans un article
+RÉELLE, cache vidé, liste des matchs repliée — 2530 px dans un article de 900 px,
+2580 à 700, 2790 en mobile. Mesurer le widget seul ne suffit pas : dans un article
 il est plus étroit que le viewport, donc plus haut. Le script ci-dessous remplace
 ensuite cette réserve par la hauteur exacte. */
-#busa-c1b-fr{min-height:2515px}
-@media (max-width:760px){#busa-c1b-fr{min-height:2565px}}
-@media (max-width:520px){#busa-c1b-fr{min-height:2755px}}
+#busa-c1b-fr{min-height:2530px}
+@media (max-width:760px){#busa-c1b-fr{min-height:2580px}}
+@media (max-width:520px){#busa-c1b-fr{min-height:2790px}}
 </style>
 
 <iframe id="busa-c1b-fr" src="https://jcrochet-netizen.github.io/bracket-c1-2627/bracket-c1.html" title="Bracket de la Ligue des champions 2026-2027 - matchs, classement et phase finale" loading="lazy" scrolling="no" referrerpolicy="strict-origin-when-cross-origin" style="display:block;margin:0 auto;width:100%;max-width:900px;border:0;overflow:hidden"></iframe>

@@ -177,8 +177,8 @@
 
 /* -------------------------------------------------------------- Bracket */
 .c1b .br-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:.4rem; scrollbar-width:thin;}
-.c1b .br{--gp:16px; display:grid; grid-template-columns:repeat(5,minmax(9.4rem,1fr));
-  column-gap:var(--gp); min-width:50rem;}
+.c1b .br{--gp:16px; display:grid; grid-template-columns:repeat(5,minmax(10.4rem,1fr));
+  column-gap:var(--gp); min-width:55rem;}
 .c1b .br-hd{font-size:.6rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
   color:var(--ink3); text-align:center; padding-bottom:.45rem;}
 .c1b .br-hd em{display:block; font-style:normal; font-weight:500; letter-spacing:0; text-transform:none;
@@ -206,8 +206,9 @@
 .c1b .tie .row:hover:not(:disabled){background:var(--sf2);}
 .c1b .tie .row:disabled{cursor:default; color:var(--ink3);}
 .c1b .tie .row .seed{
-  flex:none; min-width:1.15rem; text-align:center; font-size:.58rem; font-weight:750;
-  color:var(--ink3); background:var(--g); border-radius:4px; padding:.05rem .1rem;
+  flex:none; min-width:2.35rem; text-align:center; font-size:.56rem; font-weight:750;
+  color:var(--ink3); background:var(--g); border-radius:4px; padding:.05rem .15rem;
+  font-variant-numeric:tabular-nums; letter-spacing:-.01em;
 }
 .c1b .tie .row .crest{width:1.15rem; height:1.15rem;}
 .c1b .tie .row .nm{font-size:.74rem;}
@@ -321,7 +322,7 @@
       zOk:"1-8 · qualifiés pour les 8es", zPo:"9-24 · barrages", zOut:"25-36 · éliminés",
       noGames:"Aucun match joué : les 36 clubs sont à égalité et listés par ordre alphabétique. Le classement prendra forme dès la 1re journée.",
       brTitle:"L'arbre de la phase finale",
-      brNote:"Projection à l'instant t d'après le classement. Cliquez sur une équipe pour la faire avancer.",
+      brNote:"Projection d’après le classement. Les barrages opposent des paires : « 21/22 » affronte « 11/12 » — le tirage décidera lequel des deux clubs de chaque paire part de ce côté. Cliquez sur une équipe pour la faire avancer.",
       brDrawn:"Tirage effectué : rencontres réelles.",
       rPo:"Barrages", rR16:"8es de finale", rQf:"Quarts", rSf:"Demies", rF:"Finale",
       silver:"Côté argenté", blue:"Côté bleu", secondLeg:"reçoit au match retour", finalHome:"L’équipe du côté argenté est l’équipe recevante en finale.",
@@ -340,7 +341,7 @@
       zOk:"1-8 · straight to the last 16", zPo:"9-24 · knockout play-offs", zOut:"25-36 · eliminated",
       noGames:"No matches played yet: all 36 clubs are level and listed alphabetically. The table takes shape from matchday 1.",
       brTitle:"The knockout bracket",
-      brNote:"Projected from the table as it stands. Click a team to move it through.",
+      brNote:"Projected from the table. The play-offs pair up brackets: \"21/22\" meets \"11/12\" — the draw decides which of the two clubs goes to this side. Click a team to move it through.",
       brDrawn:"Draw made: real ties shown.",
       rPo:"Play-offs", rR16:"Round of 16", rQf:"Quarter-finals", rSf:"Semi-finals", rF:"Final",
       silver:"Silver side", blue:"Blue side", secondLeg:"plays the second leg at home", finalHome:"The silver-side team is the home team in the final.",
@@ -359,7 +360,7 @@
       zOk:"1-8 · a octavos", zPo:"9-24 · play-offs", zOut:"25-36 · eliminados",
       noGames:"Ningún partido jugado: los 36 clubes están empatados y aparecen por orden alfabético. La clasificación tomará forma en la 1.ª jornada.",
       brTitle:"El cuadro de la fase final",
-      brNote:"Proyección según la clasificación actual. Haz clic en un equipo para hacerlo avanzar.",
+      brNote:"Proyección según la clasificación. Los play-offs enfrentan parejas: «21/22» contra «11/12»; el sorteo decidirá cuál de los dos clubes va a este lado. Haz clic en un equipo para hacerlo avanzar.",
       brDrawn:"Sorteo realizado: eliminatorias reales.",
       rPo:"Play-offs", rR16:"Octavos", rQf:"Cuartos", rSf:"Semifinales", rF:"Final",
       silver:"Lado plateado", blue:"Lado azul", secondLeg:"juega la vuelta en casa", finalHome:"El equipo del lado plateado es el local en la final.",
@@ -378,7 +379,7 @@
       zOk:"1-8 · direto às oitavas", zPo:"9-24 · play-offs", zOut:"25-36 · eliminados",
       noGames:"Nenhum jogo disputado: os 36 clubes estão empatados e aparecem em ordem alfabética. A classificação ganha forma a partir da 1ª rodada.",
       brTitle:"O chaveamento do mata-mata",
-      brNote:"Projeção a partir da classificação atual. Clique num time para avançá-lo.",
+      brNote:"Projeção a partir da classificação. Os play-offs opõem duplas: “21/22” contra “11/12” — o sorteio decide qual dos dois clubes fica deste lado. Clique num time para avançá-lo.",
       brDrawn:"Sorteio realizado: confrontos reais.",
       rPo:"Play-offs", rR16:"Oitavas", rQf:"Quartas", rSf:"Semifinais", rF:"Final",
       silver:"Lado prateado", blue:"Lado azul", secondLeg:"joga a volta em casa", finalHome:"A equipa do lado prateado é a visitada na final.",
@@ -397,7 +398,7 @@
       zOk:"1-8 · agli ottavi", zPo:"9-24 · spareggi", zOut:"25-36 · eliminate",
       noGames:"Nessuna partita giocata: le 36 squadre sono a pari punti e sono elencate in ordine alfabetico. La classifica prenderà forma dalla 1ª giornata.",
       brTitle:"Il tabellone della fase finale",
-      brNote:"Proiezione sulla classifica attuale. Clicca una squadra per farla avanzare.",
+      brNote:"Proiezione sulla classifica. Gli spareggi accoppiano le coppie: «21/22» contro «11/12» — il sorteggio decide quale delle due squadre va da questo lato. Clicca una squadra per farla avanzare.",
       brDrawn:"Sorteggio effettuato: sfide reali.",
       rPo:"Spareggi", rR16:"Ottavi", rQf:"Quarti", rSf:"Semifinali", rF:"Finale",
       silver:"Lato argento", blue:"Lato blu", secondLeg:"gioca il ritorno in casa", finalHome:"La squadra del lato argento è quella di casa in finale.",
@@ -521,6 +522,17 @@
     { cote: "bleu",   po: [23, 10], seed: 7 },
     { cote: "bleu",   po: [18, 15], seed: 2 }
   ];
+
+  /**
+   * Notation de l'annexe B : une case de barrage ou de 8e ne désigne pas une
+   * position ferme mais une PAIRE — « 21/22 » se lit « le club classé 21e ou
+   * 22e ». Le tirage décide lequel des deux part de ce côté de l'arbre, et
+   * c'est la paire {11,12} qui affronte la paire {21,22}, jamais 21 contre 22.
+   */
+  function paire(n) {
+    if (!n) return null;
+    return n % 2 ? n + "/" + (n + 1) : (n - 1) + "/" + n;
+  }
 
   function construire(rows) {
     var byPos = {};
@@ -869,10 +881,12 @@
 
   function ligneTie(t, side, round) {
     var code = t[side];
-    // Le badge porte toujours le rang de phase de ligue : il reste lisible
-    // jusqu'en finale, alors que la tête de série n'existe qu'aux deux
-    // premiers tours.
-    var seed = code ? RANK[code] : (side === "a" ? t.sa : t.sb);
+    var slot = side === "a" ? t.sa : t.sb;
+    // Barrages et 8es : la paire, comme sur le schéma de l'UEFA, parce que le
+    // tirage n'a pas encore tranché à l'intérieur de la paire. Ensuite, le rang
+    // réel du club, la notation par paires n'ayant plus de sens.
+    var parPaire = (round === "po" || round === "r16");
+    var seed = parPaire ? paire(slot) : (code ? RANK[code] : null);
     // Le bas de l'affiche reçoit au retour ; en finale, c'est le côté argenté,
     // donc le haut.
     var retour = round === "f" ? side === "a" : side === "b";
