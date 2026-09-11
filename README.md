@@ -40,20 +40,29 @@ fois moins, pour un résultat publié dans les 15 à 30 minutes suivant la fin d
 
 ## Le classement : critères UEFA
 
-Phase de ligue (règlement UCL, art. 20.01) — **pas de confrontation directe**, les
-36 clubs ne s'affrontent pas tous :
+Phase de ligue — **article 18 du règlement UCL 2026/27**, vérifié sur documents.uefa.com.
+À égalité de points :
 
-1. points
-2. différence de buts
-3. buts marqués
-4. buts marqués à l'extérieur
-5. victoires
-6. victoires à l'extérieur
-7. points disciplinaires — carton jaune 1, deuxième jaune 3, rouge direct 3,
-   jaune + rouge direct 4 ; le plus bas total passe devant
-8. coefficient de club UEFA
+1. différence de buts
+2. buts marqués
+3. buts marqués à l'extérieur
+4. victoires
+5. victoires à l'extérieur
+6. points cumulés des adversaires de phase de ligue
+7. différence de buts cumulée des adversaires
+8. buts marqués cumulés des adversaires
+9. points disciplinaires — carton jaune 1, expulsion sur deux jaunes 3, rouge 3 ;
+   le plus bas total passe devant
+10. coefficient de club UEFA
 
-Le 8<sup>e</sup> critère n'est publié par aucune API. À égalité parfaite, le widget
+**Pas de confrontation directe** : les 36 clubs ne s'affrontent pas tous.
+
+Une première version s'arrêtait aux points disciplinaires : **les critères 6 à 8
+manquaient**. Ils portent sur les **huit adversaires tirés au sort**, joués ou non. En
+fin de phase de ligue les deux lectures se confondent ; en cours de saison, c'est la
+seule qui ne bascule pas selon l'ordre du calendrier.
+
+Le 10<sup>e</sup> critère n'est publié par aucune API. À égalité parfaite, le widget
 retombe sur l'**ordre alphabétique** — neutre et stable, plutôt que sur l'ordre
 arbitraire renvoyé par SportMonks. En pratique le cas ne se présente qu'avant le coup
 d'envoi de la 1<sup>re</sup> journée, où les 36 clubs sont à zéro : le widget l'écrit

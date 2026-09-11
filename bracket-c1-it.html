@@ -344,7 +344,7 @@
       champion:"Vainqueur", tbd:"Vainqueur B", auto:"Remplir d'après le classement", clear:"Effacer",
       draw:"Simuler le tirage", drawn:"Tirage simulé — relancez pour un autre", drawReal:"Le vrai tirage des barrages a lieu le 29 janvier 2027.",
       outTitle:"Éliminés (25e-36e)", scroll:"Faites défiler pour voir tout l'arbre",
-      footer:"Données SportMonks, actualisées automatiquement. Classement calculé selon les critères UEFA : points, différence de buts, buts marqués, buts marqués à l'extérieur, victoires, victoires à l'extérieur, points disciplinaires." },
+      footer:"Données SportMonks, actualisées automatiquement. Classement selon l’article 18 du règlement UEFA : points, différence de buts, buts marqués, buts marqués à l’extérieur, victoires, victoires à l’extérieur, puis points, différence de buts et buts cumulés des adversaires, points disciplinaires." },
     en:{ locale:"en-GB", tz:"Europe/London",
       eyebrow:"UEFA Champions League 2026-27", title:"Fixtures, table and bracket",
       loading:"Loading data…", error:"Data unavailable right now.",
@@ -364,7 +364,7 @@
       champion:"Winner", tbd:"Winner PO", auto:"Fill from the table", clear:"Clear",
       draw:"Simulate the draw", drawn:"Draw simulated — hit it again for another", drawReal:"The real play-off draw takes place on 29 January 2027.",
       outTitle:"Eliminated (25th-36th)", scroll:"Scroll to see the whole bracket",
-      footer:"SportMonks data, refreshed automatically. Table sorted by the UEFA criteria: points, goal difference, goals scored, away goals, wins, away wins, disciplinary points." },
+      footer:"SportMonks data, refreshed automatically. Table sorted under Article 18 of the UEFA regulations: points, goal difference, goals scored, away goals, wins, away wins, then opponents’ combined points, goal difference and goals, then disciplinary points." },
     es:{ locale:"es-ES", tz:"Europe/Madrid",
       eyebrow:"Liga de Campeones 2026-2027", title:"Partidos, clasificación y cuadro",
       loading:"Cargando datos…", error:"Datos no disponibles por ahora.",
@@ -384,7 +384,7 @@
       champion:"Campeón", tbd:"Ganador PO", auto:"Rellenar según la clasificación", clear:"Borrar",
       draw:"Simular el sorteo", drawn:"Sorteo simulado — vuelve a pulsar para otro", drawReal:"El sorteo real de los play-offs es el 29 de enero de 2027.",
       outTitle:"Eliminados (25.º-36.º)", scroll:"Desliza para ver todo el cuadro",
-      footer:"Datos de SportMonks, actualizados automáticamente. Clasificación según los criterios UEFA: puntos, diferencia de goles, goles a favor, goles fuera de casa, victorias, victorias fuera, puntos disciplinarios." },
+      footer:"Datos de SportMonks, actualizados automáticamente. Clasificación según el artículo 18 del reglamento UEFA: puntos, diferencia de goles, goles a favor, goles fuera, victorias, victorias fuera, luego puntos, diferencia de goles y goles acumulados de los rivales, puntos disciplinarios." },
     pt:{ locale:"pt-BR", tz:"America/Sao_Paulo",
       eyebrow:"Liga dos Campeões 2026-2027", title:"Jogos, classificação e chaveamento",
       loading:"Carregando dados…", error:"Dados indisponíveis no momento.",
@@ -404,7 +404,7 @@
       champion:"Campeão", tbd:"Vencedor PO", auto:"Preencher pela classificação", clear:"Limpar",
       draw:"Simular o sorteio", drawn:"Sorteio simulado — clique de novo para outro", drawReal:"O sorteio real dos play-offs é a 29 de janeiro de 2027.",
       outTitle:"Eliminados (25º-36º)", scroll:"Arraste para ver o chaveamento inteiro",
-      footer:"Dados SportMonks, atualizados automaticamente. Classificação pelos critérios da UEFA: pontos, saldo de gols, gols marcados, gols fora, vitórias, vitórias fora, pontos disciplinares." },
+      footer:"Dados SportMonks, atualizados automaticamente. Classificação pelo artigo 18 do regulamento da UEFA: pontos, saldo de gols, gols marcados, gols fora, vitórias, vitórias fora, depois pontos, saldo e gols somados dos adversários, pontos disciplinares." },
     it:{ locale:"it-IT", tz:"Europe/Rome",
       eyebrow:"Champions League 2026-2027", title:"Partite, classifica e tabellone",
       loading:"Caricamento dati…", error:"Dati non disponibili al momento.",
@@ -424,7 +424,7 @@
       champion:"Vincitrice", tbd:"Vincente SP", auto:"Compila dalla classifica", clear:"Cancella",
       draw:"Simula il sorteggio", drawn:"Sorteggio simulato — rilancia per un altro", drawReal:"Il sorteggio vero degli spareggi è il 29 gennaio 2027.",
       outTitle:"Eliminate (25ª-36ª)", scroll:"Scorri per vedere tutto il tabellone",
-      footer:"Dati SportMonks, aggiornati automaticamente. Classifica secondo i criteri UEFA: punti, differenza reti, reti fatte, reti in trasferta, vittorie, vittorie in trasferta, punti disciplinari." }
+      footer:"Dati SportMonks, aggiornati automaticamente. Classifica secondo l’articolo 18 del regolamento UEFA: punti, differenza reti, reti fatte, reti in trasferta, vittorie, vittorie in trasferta, poi punti, differenza reti e reti complessive delle avversarie, punti disciplinari." }
   };
   var T = L10N[LANG] || L10N.fr;
 
@@ -464,21 +464,34 @@
   };
 
   /* -------------------------------------------------------------- Classement
-   * Critères UEFA (règlement UCL, art. 20.01/20.03) pour la phase de ligue :
-   *   1 points · 2 différence de buts · 3 buts marqués · 4 buts marqués à
-   *   l'extérieur · 5 victoires · 6 victoires à l'extérieur · 7 points
-   *   disciplinaires (le plus bas d'abord) · 8 coefficient de club.
+   * Article 18 du règlement UCL 2026/27 (documents.uefa.com), à égalité de
+   * points :
+   *   1 différence de buts · 2 buts marqués · 3 buts marqués à l'extérieur
+   *   4 victoires · 5 victoires à l'extérieur
+   *   6 points cumulés des adversaires de phase de ligue
+   *   7 différence de buts cumulée des adversaires
+   *   8 buts marqués cumulés des adversaires
+   *   9 points disciplinaires (le plus bas d'abord) · 10 coefficient de club
    * Pas de confrontation directe : les 36 clubs ne s'affrontent pas tous.
-   * Le 8e critère (coefficient de club) n'est publié par aucune API : à
-   * égalité parfaite on retombe sur l'ordre alphabétique, neutre et stable,
-   * plutôt que sur l'ordre arbitraire renvoyé par SportMonks. Le cas ne se
-   * présente en pratique qu'avant le coup d'envoi de la 1re journée, où les
-   * 36 clubs sont à zéro — le widget le signale alors explicitement.
+   *
+   * Critères 6 à 8 : on somme sur les HUIT adversaires tirés au sort, joués ou
+   * non. En fin de phase les deux lectures se confondent ; en cours de saison,
+   * c'est la seule qui ne bascule pas selon l'ordre du calendrier.
+   *
+   * Le 10e critère n'est publié par aucune API : à égalité parfaite on retombe
+   * sur l'ordre alphabétique, neutre et stable. Le cas ne se présente en
+   * pratique qu'avant la 1re journée, où le widget le signale explicitement.
    */
   function classement(data) {
     var R = {};
     Object.keys(data.teams).forEach(function (c) {
-      R[c] = { code: c, p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, agf: 0, aw: 0, pts: 0, form: [] };
+      R[c] = { code: c, p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, agf: 0, aw: 0, pts: 0, form: [], adv: [] };
+    });
+    // Les huit adversaires tirés au sort, joués ou non (critères 6 à 8).
+    data.matchdays.forEach(function (j) {
+      j.matches.forEach(function (m) {
+        if (R[m.h] && R[m.a]) { R[m.h].adv.push(m.a); R[m.a].adv.push(m.h); }
+      });
     });
     data.matchdays.forEach(function (j) {
       j.matches.forEach(function (m) {
@@ -501,9 +514,15 @@
       r.name = data.teams[c].name;
       return r;
     });
+    out.forEach(function (r) {
+      r.opts = 0; r.ogd = 0; r.ogf = 0;
+      r.adv.forEach(function (c) { var o = R[c]; r.opts += o.pts; r.ogd += o.gf - o.ga; r.ogf += o.gf; });
+    });
     out.sort(function (x, y) {
       return y.pts - x.pts || y.gd - x.gd || y.gf - x.gf || y.agf - x.agf ||
-             y.w - x.w || y.aw - x.aw || x.disc - y.disc ||
+             y.w - x.w || y.aw - x.aw ||
+             y.opts - x.opts || y.ogd - x.ogd || y.ogf - x.ogf ||
+             x.disc - y.disc ||
              x.name.localeCompare(y.name, T.locale);
     });
     out.forEach(function (r, i) { r.pos = i + 1; });
